@@ -92,3 +92,4 @@ Temporary Items
 /.idea/modules.xml
 /pkg/mod/cache/lock
 /go.sum
+/.idea
