@@ -1,2 +1,9 @@
-age: 111
-name: name12
+sites:
+    - key: pzdy
+      baseurl: https://pzdy.win
+      playurl: '%s/voddetail/%s.html'
+      spiderkey: maccms
+    - key: pz
+      baseurl: https://pzdy.win
+      playurl: ""
+      spiderkey: ""
