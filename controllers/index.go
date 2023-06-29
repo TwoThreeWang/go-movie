@@ -1,6 +1,8 @@
 package controllers
 
 import (
+	"context"
+	"fmt"
 	"github.com/gin-gonic/gin"
 	"github.com/spf13/viper"
 	"movie/configs"
@@ -50,8 +52,13 @@ func Search(c *gin.Context) {
 				return
 			}
 			timeoutChan := time.After(time.Duration(timeOut) * time.Second)
+			// 经过context的WithTimeout设置一个有效时间为800毫秒的context
+			// 该context会在耗尽800毫秒后或者方法执行完成后结束,结束的时候会向通道ctx.Done发送信号
+			ctx, cancel := context.WithTimeout(context.Background(), time.Duration(timeOut)*time.Second)
+			// 注意,这里要记得调用cancel(),否则即便提早执行完了,还要傻傻等到800毫秒后context才会被释放
+			defer cancel()
 			for _, site := range sites {
-				go func() {
+				go func(ctx context.Context) {
 					// 动态调用采集函数
 					dataNew, msg := DynamicRunFunc(site, kw)
 					// 将响应结果发送到结果通道
@@ -59,7 +66,7 @@ func Search(c *gin.Context) {
 					if msg != "" {
 						easylog.Log.Error(msg)
 					}
-				}()
+				}(ctx)
 			}
 			// 等待所有响应结果返回或者超时
 			var datas []spider.Movie
@@ -68,6 +75,7 @@ func Search(c *gin.Context) {
 				case res := <-resultChan:
 					datas = append(datas, res...)
 				case <-timeoutChan:
+					fmt.Println("timeout!!!")
 					result.Ok(c, datas)
 					c.Abort()
 					return
@@ -105,5 +113,5 @@ func DynamicRunFunc(site configs.SpiderSites, kw string) (data []spider.Movie, m
 		return
 	}
 	// 调用接口中的Search函数
-	return spd.ApiSearch(kw)
+	return spd.ApiSearch(site, kw)
 }
