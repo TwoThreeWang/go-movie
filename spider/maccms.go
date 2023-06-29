@@ -7,7 +7,6 @@ import (
 	"movie/controllers/admin"
 	"movie/utils/easyhttp"
 	"movie/utils/easylog"
-	"net/http"
 	"strconv"
 	"time"
 )
@@ -34,21 +33,17 @@ func doSearch(site configs.SpiderSites, kw string) (movie []Movie, err error) {
 }
 
 // MacCmsSearch 苹果CMS 搜索接口
-func MacCmsSearch(baseUrl string, kw string) (data []Movie, msg string, status int) {
-	msg = "Success"
-	status = http.StatusOK
+func MacCmsSearch(baseUrl string, kw string) (data []Movie, msg string) {
 	var sites []configs.SpiderSites
 	sites, err := admin.GetSites()
 	if err != nil {
 		msg = err.Error()
-		status = http.StatusBadRequest
 		return
 	}
 	for _, site := range sites {
 		movies, err := doSearch(site, kw)
 		if err != nil {
 			msg = err.Error()
-			status = http.StatusBadRequest
 			return
 		}
 		// 遍历JSON数组，增加数据来源和播放链接

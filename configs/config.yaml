@@ -3,7 +3,3 @@ sites:
       baseurl: https://pzdy.win
       playurl: '%s/voddetail/%s.html'
       spiderkey: maccms
-    - key: pz
-      baseurl: https://pzdy.win
-      playurl: ""
-      spiderkey: ""
