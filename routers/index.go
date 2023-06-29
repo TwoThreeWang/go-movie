@@ -8,7 +8,7 @@ import (
 func RegisterIndexRoutes(r *gin.Engine) {
 	api := r.Group("/")
 	{
-		api.GET("/", controllers.Index)
-		api.GET("/search", controllers.Index) // 搜索接口
+		api.GET("/", controllers.Search)
+		api.GET("/search", controllers.Search) // 搜索接口
 	}
 }

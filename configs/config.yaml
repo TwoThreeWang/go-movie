@@ -3,3 +3,4 @@ sites:
       baseurl: https://pzdy.win
       playurl: '%s/voddetail/%s.html'
       spiderkey: maccms
+spider_timeout: 15

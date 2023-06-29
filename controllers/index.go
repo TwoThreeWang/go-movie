@@ -2,14 +2,30 @@ package controllers
 
 import (
 	"github.com/gin-gonic/gin"
+	"github.com/spf13/viper"
+	"movie/configs"
 	"movie/spider"
 	"movie/utils/auth"
 	"movie/utils/easylog"
 	"movie/utils/result"
 	"movie/utils/try"
+	"reflect"
+	"strconv"
+	"time"
 )
 
-func Index(c *gin.Context) {
+// 定义一个map，存储不同key对应的struct类型
+var types = map[string]reflect.Type{
+	"maccms": reflect.TypeOf(spider.MacCmsSearch{}), // 苹果CMS采集接口
+}
+
+func GetSites() (sites []configs.SpiderSites, err error) {
+	// 获取已有站点数据
+	err = viper.UnmarshalKey("sites", &sites)
+	return
+}
+
+func Search(c *gin.Context) {
 	// token校验
 	if !auth.Verify(c) {
 		c.Abort()
@@ -18,13 +34,46 @@ func Index(c *gin.Context) {
 	kw := c.Query("kw") // 搜索关键词
 	if kw != "" {
 		try.Try(func() {
-			data, msg := spider.MacCmsSearch("https://pzdy.win", kw)
-			if msg != "" {
-				result.Fail(c, result.ResultError, msg)
+			sites, err := GetSites()
+			if err != nil {
+				result.Fail(c, result.ResultError, err.Error())
 				c.Abort()
 				return
 			}
-			result.Ok(c, data)
+			// 创建结果通道
+			resultChan := make(chan []spider.Movie, len(sites))
+			// 创建超时通道
+			timeOut, err := strconv.Atoi(viper.GetString("spider_timeout"))
+			if err != nil {
+				result.Fail(c, result.ResultError, err.Error())
+				c.Abort()
+				return
+			}
+			timeoutChan := time.After(time.Duration(timeOut) * time.Second)
+			for _, site := range sites {
+				go func() {
+					// 动态调用采集函数
+					dataNew, msg := DynamicRunFunc(site, kw)
+					// 将响应结果发送到结果通道
+					resultChan <- dataNew
+					if msg != "" {
+						easylog.Log.Error(msg)
+					}
+				}()
+			}
+			// 等待所有响应结果返回或者超时
+			var datas []spider.Movie
+			for i := 0; i < len(sites); i++ {
+				select {
+				case res := <-resultChan:
+					datas = append(datas, res...)
+				case <-timeoutChan:
+					result.Ok(c, datas)
+					c.Abort()
+					return
+				}
+			}
+			result.Ok(c, datas)
 			c.Abort()
 			return
 		}).CatchAll(func(err error) {
@@ -36,4 +85,25 @@ func Index(c *gin.Context) {
 	} else {
 		result.FailNoMsg(c, result.InvalidArgs)
 	}
+}
+
+// DynamicRunFunc 动态调用不同的采集接口
+func DynamicRunFunc(site configs.SpiderSites, kw string) (data []spider.Movie, msg string) {
+	key := site.SpiderKey
+	// 根据key获取对应的struct类型
+	ts, ok := types[key]
+	if !ok {
+		msg = "unknown type " + key
+		return
+	}
+	// 动态实例化struct
+	sp := reflect.New(ts).Elem()
+	// 调用接口方法
+	spd, ok := sp.Interface().(spider.Spider)
+	if !ok {
+		msg = key + " does not implement Shape interface"
+		return
+	}
+	// 调用接口中的Search函数
+	return spd.ApiSearch(kw)
 }
