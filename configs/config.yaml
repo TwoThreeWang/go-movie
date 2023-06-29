@@ -3,4 +3,8 @@ sites:
       baseurl: https://pzdy.win
       playurl: '%s/voddetail/%s.html'
       spiderkey: maccms
-spider_timeout: 15
+    - key: 6080
+      baseurl: https://www.6080yy3.com
+      playurl: '%s/voddetail/%s.html'
+      spiderkey: maccms
+spider_timeout: 10
