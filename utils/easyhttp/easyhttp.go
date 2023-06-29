@@ -13,7 +13,9 @@ import (
 	"time"
 )
 
-var client *http.Client
+var client = &http.Client{
+	Timeout: time.Second * 20, // set timeout to 10 seconds
+}
 
 func init() {
 	def := http.DefaultTransport
