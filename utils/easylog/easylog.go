@@ -16,7 +16,7 @@ var Log *zap.SugaredLogger
 // LoggerL 当性能和类型安全至关重要时，请使用 Logger。 它甚至比 SugaredLogger 更快并且分配的更少，但它只支持结构化日志记录。
 var LogL *zap.Logger
 
-const DefaultLogPath = "log/" // 默认输出日志文件路径
+const DefaultLogPath = "/log/" // 默认输出日志文件路径
 
 type LogConfigs struct {
 	LogLevel          string // 日志打印级别 debug  info  warning  error
