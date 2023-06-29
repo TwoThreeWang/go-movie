@@ -5,6 +5,7 @@ go 1.20
 require gorm.io/gorm v1.25.1
 
 require (
+	github.com/dgrijalva/jwt-go v3.2.0+incompatible
 	github.com/gin-gonic/gin v1.9.1
 	github.com/glebarez/sqlite v1.8.0
 	github.com/natefinch/lumberjack v2.0.0+incompatible

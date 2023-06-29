@@ -20,12 +20,14 @@ func AddSite(c *gin.Context) {
 	var site configs.SpiderSites
 	if err := c.BindJSON(&site); err != nil {
 		result.Fail(c, result.ResultError, err.Error())
+		c.Abort()
 		return
 	}
 	// 获取已有站点数据
 	sites, err := GetSites()
 	if err != nil {
 		result.Fail(c, result.ResultError, err.Error())
+		c.Abort()
 		return
 	}
 	// 保存新增站点数据
@@ -39,6 +41,7 @@ func AddSite(c *gin.Context) {
 	viper.Set("sites", sites)
 	if err = viper.WriteConfig(); err != nil {
 		result.Fail(c, result.ResultError, err.Error())
+		c.Abort()
 		return
 	}
 	result.Ok(c, site)
@@ -49,6 +52,7 @@ func ListSites(c *gin.Context) {
 	sites, err := GetSites()
 	if err != nil {
 		result.Fail(c, result.ResultError, err.Error())
+		c.Abort()
 		return
 	}
 	result.Ok(c, sites)
@@ -59,12 +63,14 @@ func DelSite(c *gin.Context) {
 	key := c.Query("key")
 	if key == "" {
 		result.FailNoMsg(c, result.InvalidArgs)
+		c.Abort()
 		return
 	}
 	// 获取已有站点数据
 	sites, err := GetSites()
 	if err != nil {
 		result.Fail(c, result.ResultError, err.Error())
+		c.Abort()
 		return
 	}
 	// 删除新增站点数据
@@ -81,6 +87,7 @@ func DelSite(c *gin.Context) {
 	viper.Set("sites", newsites)
 	if err = viper.WriteConfig(); err != nil {
 		result.Fail(c, result.DatabaseError, err.Error())
+		c.Abort()
 		return
 	}
 	result.Ok(c, "成功删除 "+strconv.Itoa(delnum)+" 条数据")

@@ -69,6 +69,7 @@ func main() {
 		r := gin.Default()
 		routers.RegisterIndexRoutes(r)
 		routers.RegisterAdminRoutes(r)
+		routers.RegisterLoginRoutes(r)
 		err := r.Run()
 		if err != nil {
 			easylog.Log.Info(err)
