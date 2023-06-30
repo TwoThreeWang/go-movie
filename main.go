@@ -8,6 +8,7 @@ import (
 	"github.com/spf13/viper"
 	"gorm.io/gorm"
 	"movie/routers"
+	"movie/utils"
 	"movie/utils/easylog"
 	"time"
 )
@@ -60,6 +61,7 @@ func configInit() bool {
 }
 
 func main() {
+	utils.Wb() // 一个功能示例函数，临时测试
 	// 日志初始化
 	easylog.Init()
 	easylog.Log.Info(`程序运行`)

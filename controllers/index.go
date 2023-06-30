@@ -7,6 +7,7 @@ import (
 	"github.com/spf13/viper"
 	"movie/configs"
 	"movie/spider"
+	"movie/spider/maccms"
 	"movie/utils/auth"
 	"movie/utils/easylog"
 	"movie/utils/result"
@@ -18,7 +19,7 @@ import (
 
 // 定义一个map，存储不同key对应的struct类型
 var types = map[string]reflect.Type{
-	"maccms": reflect.TypeOf(spider.MacCmsSearch{}), // 苹果CMS采集接口
+	"maccms": reflect.TypeOf(maccms.MacCmsSearch{}), // 苹果CMS采集接口
 }
 
 func GetSites() (sites []configs.SpiderSites, err error) {
@@ -113,5 +114,5 @@ func DynamicRunFunc(site configs.SpiderSites, kw string) (data []spider.Movie, m
 		return
 	}
 	// 调用接口中的Search函数
-	return spd.ApiSearch(site, kw)
+	return spd.SpiderSearch(site, kw)
 }

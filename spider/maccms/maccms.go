@@ -1,19 +1,20 @@
-package spider
+package maccms
 
 import (
 	"encoding/json"
 	"fmt"
 	"movie/configs"
+	"movie/spider"
 	"movie/utils/easyhttp"
 	"movie/utils/easylog"
 	"strconv"
 	"time"
 )
 
-// MacCmsSearch 苹果CMS搜索接口
+// MacCmsSearch 苹果CMS搜索接口实现
 type MacCmsSearch struct{}
 
-func (m MacCmsSearch) ApiSearch(site configs.SpiderSites, kw string) (data []Movie, msg string) {
+func (m MacCmsSearch) SpiderSearch(site configs.SpiderSites, kw string) (data []spider.Movie, msg string) {
 	movies, err := doSearch(site, kw)
 	if err != nil {
 		msg = err.Error()
@@ -29,7 +30,7 @@ func (m MacCmsSearch) ApiSearch(site configs.SpiderSites, kw string) (data []Mov
 }
 
 // 实际采集逻辑
-func doSearch(site configs.SpiderSites, kw string) (movie []Movie, err error) {
+func doSearch(site configs.SpiderSites, kw string) (movie []spider.Movie, err error) {
 	// 获取当前时间的13位时间戳
 	timestamp := time.Now().UnixNano() / int64(time.Millisecond)
 	url := site.BaseUrl + "/index.php/ajax/suggest"
@@ -50,7 +51,7 @@ func doSearch(site configs.SpiderSites, kw string) (movie []Movie, err error) {
 	}
 	fmt.Println(url + " 有结果")
 	// 解析JSON响应
-	var jsondata MacCmsSearchResult
+	var jsondata spider.MacCmsSearchResult
 	err = json.Unmarshal(jsonStr, &jsondata)
 	if err != nil {
 		fmt.Println(url + " 错误结果 " + string(jsonStr))

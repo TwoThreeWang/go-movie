@@ -1,8 +1,11 @@
 package spider
 
-import "movie/configs"
+import (
+	"movie/configs"
+)
 
-// Spider 采集接口
+// Spider 定义一个采集接口
 type Spider interface {
-	ApiSearch(site configs.SpiderSites, kw string) (data []Movie, msg string)
+	// 接口需要实现的方法列表
+	SpiderSearch(site configs.SpiderSites, kw string) (data []Movie, msg string)
 }
