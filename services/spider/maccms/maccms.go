@@ -4,7 +4,7 @@ import (
 	"encoding/json"
 	"fmt"
 	"movie/configs"
-	"movie/spider"
+	"movie/services/spider"
 	"movie/utils/easyhttp"
 	"movie/utils/easylog"
 	"strconv"

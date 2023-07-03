@@ -6,9 +6,9 @@ import (
 	"github.com/gin-gonic/gin"
 	"github.com/spf13/viper"
 	"movie/configs"
-	"movie/spider"
-	"movie/spider/maccms"
-	"movie/utils/auth"
+	"movie/middlewares"
+	spider2 "movie/services/spider"
+	"movie/services/spider/maccms"
 	"movie/utils/easylog"
 	"movie/utils/result"
 	"movie/utils/try"
@@ -30,7 +30,7 @@ func GetSites() (sites []configs.SpiderSites, err error) {
 
 func Search(c *gin.Context) {
 	// token校验
-	if !auth.Verify(c) {
+	if !middlewares.Verify(c) {
 		c.Abort()
 		return
 	}
@@ -44,7 +44,7 @@ func Search(c *gin.Context) {
 				return
 			}
 			// 创建结果通道
-			resultChan := make(chan []spider.Movie, len(sites))
+			resultChan := make(chan []spider2.Movie, len(sites))
 			// 创建超时通道
 			timeOut, err := strconv.Atoi(viper.GetString("spider_timeout"))
 			if err != nil {
@@ -70,7 +70,7 @@ func Search(c *gin.Context) {
 				}(ctx)
 			}
 			// 等待所有响应结果返回或者超时
-			var datas []spider.Movie
+			var datas []spider2.Movie
 			for i := 0; i < len(sites); i++ {
 				select {
 				case res := <-resultChan:
@@ -97,7 +97,7 @@ func Search(c *gin.Context) {
 }
 
 // DynamicRunFunc 动态调用不同的采集接口
-func DynamicRunFunc(site configs.SpiderSites, kw string) (data []spider.Movie, msg string) {
+func DynamicRunFunc(site configs.SpiderSites, kw string) (data []spider2.Movie, msg string) {
 	key := site.SpiderKey
 	// 根据key获取对应的struct类型
 	ts, ok := types[key]
@@ -108,7 +108,7 @@ func DynamicRunFunc(site configs.SpiderSites, kw string) (data []spider.Movie, m
 	// 动态实例化struct
 	sp := reflect.New(ts).Elem()
 	// 调用接口方法
-	spd, ok := sp.Interface().(spider.Spider)
+	spd, ok := sp.Interface().(spider2.Spider)
 	if !ok {
 		msg = key + " does not implement Shape interface"
 		return

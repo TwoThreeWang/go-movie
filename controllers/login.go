@@ -2,19 +2,19 @@ package controllers
 
 import (
 	"github.com/gin-gonic/gin"
-	"movie/utils/auth"
+	"movie/middlewares"
 	"movie/utils/result"
 )
 
 func Login(c *gin.Context) {
-	var user auth.LoginUser
+	var user middlewares.LoginUser
 	if err := c.BindJSON(&user); err != nil {
 		result.FailNoMsg(c, result.InvalidArgs)
 		c.Abort()
 		return
 	}
 	// todo 数据库查询用户名密码是否正确
-	signedToken, err := auth.GetToken(user)
+	signedToken, err := middlewares.GetToken(user)
 	if err != nil {
 		result.Fail(c, result.ResultError, err.Error())
 		c.Abort()
@@ -22,7 +22,7 @@ func Login(c *gin.Context) {
 	}
 	data := map[string]any{
 		"token":       signedToken,
-		"expire_time": auth.ExpireTime,
+		"expire_time": middlewares.ExpireTime,
 	}
 	result.Ok(c, data)
 }
