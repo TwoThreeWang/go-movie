@@ -2,10 +2,12 @@ package controllers
 
 import (
 	"context"
+	"errors"
 	"fmt"
 	"github.com/gin-gonic/gin"
 	"github.com/patrickmn/go-cache"
 	"github.com/spf13/viper"
+	"gorm.io/gorm"
 	"movie/configs"
 	"movie/repositories"
 	"movie/services/spider"
@@ -164,4 +166,23 @@ func Index(c *gin.Context) {
 		"app_name": "api v1.0",
 	}
 	result.Ok(c, data)
+}
+
+func GetMovieInfo(c *gin.Context) {
+	source := c.Query("source") // 来源
+	VodId := c.Query("id")      // 影片ID
+	db := repositories.GetDB()
+	var movie repositories.Movies
+	res := db.Where("source = ? and vod_id = ?", source, VodId).First(&movie)
+	if res.Error != nil {
+		if errors.Is(res.Error, gorm.ErrRecordNotFound) {
+			result.FailNoMsg(c, result.NotFound)
+			c.Abort()
+			return
+		}
+		result.FailNoMsg(c, result.DatabaseError)
+		c.Abort()
+		return
+	}
+	result.Ok(c, movie)
 }
