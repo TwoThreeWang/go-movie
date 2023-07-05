@@ -9,6 +9,7 @@ import (
 	"movie/configs"
 	"movie/middlewares"
 	"movie/services/spider"
+	"movie/services/spider/douban"
 	"movie/services/spider/zyw"
 	"movie/utils/easycache"
 	"movie/utils/easylog"
@@ -121,4 +122,36 @@ func Search(c *gin.Context) {
 		c.Abort()
 		return
 	}
+}
+
+func DoubanHot(c *gin.Context) {
+	movie_type := c.Query("type") // 热搜类型，movie：电影；tv：电视剧
+	if movie_type == "" {
+		result.FailNoMsg(c, result.InvalidArgs)
+		c.Abort()
+		return
+	}
+	if x, found := easycache.C.Get(movie_type); found {
+		data := x.(douban.ResultDoubanHot)
+		result.Ok(c, data.Subjects)
+		c.Abort()
+		return
+	}
+	data, err := douban.DoubanHot(movie_type)
+	if err != nil {
+		result.FailNoMsg(c, result.InvalidArgs)
+		c.Abort()
+		return
+	}
+	if len(data.Subjects) > 0 {
+		easycache.C.Set(movie_type, data, 6*time.Hour)
+	}
+	result.Ok(c, data.Subjects)
+}
+
+func Index(c *gin.Context) {
+	var data = map[string]string{
+		"app_name": "api v1.0",
+	}
+	result.Ok(c, data)
 }
