@@ -1,0 +1,143 @@
+posthtml,body{margin:0;height:100%;width:100%;color:#444;background-color:#fff;font-weight:350;-webkit-font-smoothing: antialiased;-moz-osx-font-smoothing: grayscale;scroll-behavior:smooth;font-family:"SF Pro SC","SF Pro Text","SF Pro Icons","PingFang SC","Helvetica Neue","Helvetica","Arial",sans-serif}
+::-webkit-details-marker{display:none}
+::-moz-list-bullet{font-size:0;float:left}
+::-webkit-scrollbar{width:7px;height:7px;background-color:#f5f5f5}
+::-webkit-scrollbar-thumb{background-color:#c8c8c8}
+input,textarea{box-sizing: border-box;-webkit-box-sizing: border-box;-moz-box-sizing: border-box;}
+p{
+    padding: 0;
+    margin: 0;
+}
+a {
+    cursor: pointer;
+    text-decoration: none;
+    -webkit-user-select: none;
+    -moz-user-select: none;
+    user-select: none;
+}
+.header-container {
+    display: grid;
+}
+.index-header{
+    padding: 20px 0;
+    width: 100%;
+    margin: 0 auto;
+    text-align: center;
+    background-color: #f6f7f9;
+}
+.index-header-logo{
+    width: 80px;
+    margin: 10px auto;
+    border-radius: 8px;
+    background: #f6f7f9;
+    box-shadow:  5px 5px 5px #c5c6c7,
+    -5px -5px 5px #ffffff;
+}
+.index-header input {
+    border: none;
+    padding: 0 52px;
+    height: 52px;
+    font-size: 16px;
+    box-sizing: border-box;
+    border-radius: 26px;
+    width: 95%;
+    max-width: 1000px;
+    background: #fff;
+    box-shadow: 0 4px 20px rgba(0,25,104,.05);
+    margin: 25px auto;
+}
+input:focus{outline:none;}
+.index-hot{
+    padding: 10px;
+    margin: 30px auto 10px;
+    max-width: 1200px;
+}
+.title{
+    font-size: 20px;
+    font-weight: 600;
+    padding-left: 5px;
+}
+.index-hot-item{
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+}
+.index-hot-item .movie {
+    display: flex;
+    align-items: center;
+    padding: 20px 5px;
+    border-bottom: 1px solid #d0d0d58f;
+}
+.index-hot-item .movie:hover{
+    background: linear-gradient(to right, #e6e4e4, #fff);
+}
+
+.index-hot-item .movie .poster {
+    height: auto;
+    margin-right: 20px;
+    width: 40%;
+    max-width: 120px;
+    vertical-align: middle;
+    border-radius: 5px;
+}
+
+.index-hot-item .movie-details {
+    flex: 1;
+}
+
+.index-hot-item .movie-title {
+    font-size: 17px;
+    font-weight: 500;
+    color: #0d141e;
+    overflow: hidden;
+    white-space: nowrap;
+    text-overflow: ellipsis;
+    word-break: break-all;
+    word-wrap: normal;
+    line-height: 50px;
+}
+
+.movie .douban-logo{
+    width: 20px;
+    vertical-align: text-bottom;
+    margin-right: 5px;
+}
+
+.movie .douban-link{
+    color: green;
+    font-size: 14px;
+}
+
+.index-hot-item .cast-list span{
+    line-height: 23px;
+    font-size: 15px;
+    z-index: 2;
+    color: #666;
+    overflow: hidden;
+    white-space: nowrap;
+    text-overflow: ellipsis;
+    word-break: break-all;
+    word-wrap: normal;
+    width: 100%;
+}
+.footerpage{
+    width: 100%;
+    margin: 0 auto;
+    text-align: center;
+    padding: 20px 0;
+}
+.hr-edge-weak {
+    border: 0;
+    padding-top: 1px;
+    background: linear-gradient(to right, transparent, #d0d0d5, transparent);
+}
+@media screen and (max-width: 1199px) {
+    .index-hot-item {
+        grid-template-columns: repeat(4, 1fr);
+    }
+}
+
+@media screen and (max-width: 767px) {
+    .index-hot-item {
+        grid-template-columns: repeat(1, 1fr);
+    }
+}
