@@ -7,7 +7,7 @@ import (
 	"github.com/patrickmn/go-cache"
 	"github.com/spf13/viper"
 	"movie/configs"
-	"movie/middlewares"
+	"movie/repositories"
 	"movie/services/spider"
 	"movie/services/spider/douban"
 	"movie/services/spider/zyw"
@@ -27,11 +27,6 @@ func GetSites() (sites []configs.SpiderSites, err error) {
 }
 
 func Search(c *gin.Context) {
-	// token校验
-	if !middlewares.Verify(c) {
-		c.Abort()
-		return
-	}
 	kw := c.Query("kw") // 搜索关键词
 	if kw != "" {
 		if x, found := easycache.C.Get(kw); found {
@@ -107,6 +102,7 @@ func Search(c *gin.Context) {
 			wg.Wait()
 			if len(datas) > 0 {
 				easycache.C.Set(kw, datas, cache.DefaultExpiration)
+				go saveDb(datas) // 结果保存到数据库
 			}
 			result.Ok(c, datas)
 			c.Abort()
@@ -122,6 +118,20 @@ func Search(c *gin.Context) {
 		c.Abort()
 		return
 	}
+}
+
+func saveDb(datas []zyw.ZyMovie) {
+	db := repositories.GetDB()
+	var movies repositories.Movies
+	for _, movie := range datas {
+		movie.UpdatedAt = time.Now()
+		movies = repositories.Movies(movie)
+		res := db.Where("source = ? and vod_id = ?", movies.Source, movies.VodId).FirstOrCreate(&movies, movies)
+		if res.Error != nil {
+			easylog.Log.Error(res.Error)
+		}
+	}
+
 }
 
 func DoubanHot(c *gin.Context) {

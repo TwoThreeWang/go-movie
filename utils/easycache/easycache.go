@@ -9,5 +9,5 @@ var C *cache.Cache
 
 func init() {
 	// 实例化缓存组件
-	C = cache.New(5*time.Minute, 10*time.Minute)
+	C = cache.New(3*60*time.Minute, 3*60*time.Minute)
 }

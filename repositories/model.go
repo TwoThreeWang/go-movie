@@ -1,0 +1,91 @@
+package repositories
+
+import "time"
+
+type Movies struct {
+	Source           string `gorm:"primaryKey"`
+	VodId            int    `gorm:"primaryKey"`
+	TypeId           int
+	TypeId1          int
+	GroupId          int
+	VodName          string
+	VodSub           string
+	VodEn            string
+	VodStatus        int
+	VodLetter        string
+	VodColor         string
+	VodTag           string
+	VodClass         string
+	VodPic           string
+	VodPicThumb      string
+	VodPicSlide      string
+	VodPicScreenshot string
+	VodActor         string
+	VodDirector      string
+	VodWriter        string
+	VodBehind        string
+	VodBlurb         string
+	VodRemarks       string
+	VodPubdate       string
+	VodTotal         int
+	VodSerial        string
+	VodTv            string
+	VodWeekday       string
+	VodArea          string
+	VodLang          string
+	VodYear          string
+	VodVersion       string
+	VodState         string
+	VodAuthor        string
+	VodJumpurl       string
+	VodTpl           string
+	VodTplPlay       string
+	VodTplDown       string
+	VodIsend         int
+	VodLock          int
+	VodLevel         int
+	VodCopyright     int
+	VodPoints        int
+	VodPointsPlay    int
+	VodPointsDown    int
+	VodHits          int
+	VodHitsDay       int
+	VodHitsWeek      int
+	VodHitsMonth     int
+	VodDuration      string
+	VodUp            int
+	VodDown          int
+	VodScore         string
+	VodScoreAll      int
+	VodScoreNum      int
+	VodTime          string
+	VodTimeAdd       int
+	VodTimeHits      int
+	VodTimeMake      int
+	VodTrysee        int
+	VodDoubanId      int
+	VodDoubanScore   string
+	VodReurl         string
+	VodRelVod        string
+	VodRelArt        string
+	VodPwd           string
+	VodPwdUrl        string
+	VodPwdPlay       string
+	VodPwdPlayUrl    string
+	VodPwdDown       string
+	VodPwdDownUrl    string
+	VodContent       string
+	VodPlayFrom      string
+	VodPlayServer    string
+	VodPlayNote      string
+	VodPlayUrl       string
+	VodDownFrom      string
+	VodDownServer    string
+	VodDownNote      string
+	VodDownUrl       string
+	VodPlot          int
+	VodPlotName      string
+	VodPlotDetail    string
+	TypeName         string
+	UpdatedAt        time.Time
+}
