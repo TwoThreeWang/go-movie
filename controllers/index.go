@@ -18,16 +18,18 @@ import (
 	"movie/utils/result"
 	"movie/utils/try"
 	"strconv"
+	"strings"
 	"sync"
 	"time"
 )
 
+// GetSites 获取已有站点数据
 func GetSites() (sites []configs.SpiderSites, err error) {
-	// 获取已有站点数据
 	err = viper.UnmarshalKey("sites", &sites)
 	return
 }
 
+// Search 搜索接口
 func Search(c *gin.Context) {
 	kw := c.Query("kw") // 搜索关键词
 	if kw != "" {
@@ -105,6 +107,7 @@ func Search(c *gin.Context) {
 			if len(datas) > 0 {
 				easycache.C.Set(kw, datas, cache.DefaultExpiration)
 				go saveDb(datas) // 结果保存到数据库
+				go addSearchHistory(kw)
 			}
 			result.Ok(c, datas)
 			c.Abort()
@@ -122,20 +125,33 @@ func Search(c *gin.Context) {
 	}
 }
 
+// 影片信息保存到数据库
 func saveDb(datas []zyw.ZyMovie) {
 	db := repositories.GetDB()
 	var movies repositories.Movies
 	for _, movie := range datas {
 		movie.UpdatedAt = time.Now()
 		movies = repositories.Movies(movie)
-		res := db.Where("source = ? and vod_id = ?", movies.Source, movies.VodId).FirstOrCreate(&movies, movies)
-		if res.Error != nil {
+		res := db.First(&movies)
+		if errors.Is(res.Error, gorm.ErrRecordNotFound) {
+			// 如果没有找到记录，则创建一条新的记录
+			res = db.Create(&movies)
+			if res.Error != nil {
+				easylog.Log.Error(res.Error)
+			}
+		} else if res.Error != nil {
 			easylog.Log.Error(res.Error)
+		} else {
+			// 如果找到了记录，则更新该记录
+			res = db.Save(&movies)
+			if res.Error != nil {
+				easylog.Log.Error(res.Error)
+			}
 		}
 	}
-
 }
 
+// DoubanHot 豆瓣热门电影数据获取
 func DoubanHot(c *gin.Context) {
 	movie_type := c.Query("type") // 热搜类型，movie：电影；tv：电视剧
 	if movie_type == "" {
@@ -161,6 +177,7 @@ func DoubanHot(c *gin.Context) {
 	result.Ok(c, data.Subjects)
 }
 
+// Index 接口首页
 func Index(c *gin.Context) {
 	var data = map[string]string{
 		"app_name": "api v1.0",
@@ -168,6 +185,7 @@ func Index(c *gin.Context) {
 	result.Ok(c, data)
 }
 
+// GetMovieInfo 查询影片信息接口
 func GetMovieInfo(c *gin.Context) {
 	source := c.Query("source") // 来源
 	VodId := c.Query("id")      // 影片ID
@@ -184,5 +202,62 @@ func GetMovieInfo(c *gin.Context) {
 		c.Abort()
 		return
 	}
+	now := time.Now()
+	if movie.UpdatedAt.Year() != now.Year() || movie.UpdatedAt.Month() != now.Month() || movie.UpdatedAt.Day() != now.Day() {
+		// 数据最后更新时间不是今天，后台更新这条数据
+		go UpdataMovieInfo(source, VodId)
+	}
 	result.Ok(c, movie)
+}
+
+// UpdataMovieInfo 根据ID和来源更新影片信息
+func UpdataMovieInfo(source string, VodId string) {
+	sites, _ := GetSites()
+	var site configs.SpiderSites
+	for _, site = range sites {
+		if site.Key == source {
+			break
+		}
+	}
+	f, ok := spider.ExternalApi[site.SpiderKey]
+	if !ok {
+		easylog.Log.Error(source + " 没找到映射采集接口")
+		return
+	}
+	// 调用采集函数
+	res, err := f.ExternalGetById(site, VodId)
+	if err != nil {
+		easylog.Log.Error(err.Error())
+		return
+	}
+	var datas []zyw.ZyMovie
+	for _, data := range res.List {
+		data.Source = source
+		datas = append(datas, data)
+	}
+	saveDb(datas)
+}
+
+// SearchHistory 最近搜索关键词
+func SearchHistory(c *gin.Context) {
+	history := viper.GetString("search_history")
+	historys := strings.Split(history, ",")
+	result.Ok(c, historys)
+}
+
+// 增加一条搜索记录
+func addSearchHistory(kw string) {
+	history := viper.GetString("search_history")
+	historys := strings.Split(history, ",")
+	historys = append(historys, kw)
+	if len(historys) > 20 {
+		// 只保留最新的20条记录
+		historys = historys[len(history)-20:]
+	}
+	str := strings.Join(historys, ", ")
+	// 修改配置文件
+	viper.Set("search_history", str)
+	if err := viper.WriteConfig(); err != nil {
+		easylog.Log.Error(err.Error())
+	}
 }

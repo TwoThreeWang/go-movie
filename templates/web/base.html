@@ -1,0 +1,34 @@
+<!doctype html>
+<meta charset="UTF-8">
+<title>
+    膨胀的电影
+</title>
+<meta name=viewport content="width=device-width,user-scalable=0">
+<link rel=stylesheet href="static/style.css">
+<meta name=apple-mobile-web-app-capable content=yes>
+<meta name=apple-mobile-web-app-status-bar-style content=black-translucent>
+<!--<meta name="referrer" content="never">-->
+<body>
+<!-- 顶部导航 -->
+<div class="headerpage" id="headerpage">
+    {{ block "headerpage" . }}{{ end }}
+</div>
+<!--顶部导航 over-->
+<script>
+    var api_url = "http://127.0.0.1:8080/api";
+</script>
+<script src="https://lf9-cdn-tos.bytecdntp.com/cdn/expire-1-M/vue/3.2.31/vue.global.min.js" type="application/javascript"></script>
+<script src="https://lf26-cdn-tos.bytecdntp.com/cdn/expire-1-M/axios/0.26.0/axios.min.js" type="application/javascript"></script>
+<!--中部主体-->
+<div id="content">
+    {{ block "content" . }}{{ end }}
+</div>
+<!--中部主体 over-->
+
+<!--footer-->
+<div class="footerpage">
+    {{ block "footerpage" . }}{{ end }}
+</div>
+<!--footer over-->
+</body>
+</html>

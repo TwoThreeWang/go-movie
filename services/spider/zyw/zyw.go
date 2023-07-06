@@ -11,9 +11,33 @@ import (
 
 type ZYW struct{}
 
-// ExternalGetReport todo 主动查询三方结果
+// ExternalGetReport 主动查询三方结果
 func (zy *ZYW) ExternalGetReport(site configs.SpiderSites, kw string) (movie ZySearchResult, err error) {
 	url := site.BaseUrl + "/provide/vod/?ac=videolist&pg=1&wd=" + kw
+	param := map[string]interface{}{}
+	header := map[string]string{
+		"Content-Type": "application/json",
+	}
+	// Get请求接口
+	jsonStr, err := easyhttp.Get(url, header, param)
+	if err != nil {
+		easylog.Log.Error(err)
+		return
+	}
+	// 解析JSON响应
+	err = json.Unmarshal(jsonStr, &movie)
+	if err != nil {
+		fmt.Println(url + " 错误结果 " + string(jsonStr))
+		easylog.Log.Error(err)
+		return
+	}
+	movie.Source = site.Key
+	return
+}
+
+// ExternalGetById 根据影片ID查询三方数据
+func (zy *ZYW) ExternalGetById(site configs.SpiderSites, vid string) (movie ZyDetailResult, err error) {
+	url := site.BaseUrl + "/provide/vod/?ac=detail&ids=" + vid
 	param := map[string]interface{}{}
 	header := map[string]string{
 		"Content-Type": "application/json",
@@ -39,6 +63,16 @@ type ZySearchResult struct {
 	Code      int       `json:"code"`
 	Msg       string    `json:"msg"`
 	Page      string    `json:"page"`
+	Pagecount int       `json:"pagecount"`
+	Limit     string    `json:"limit"`
+	Total     int       `json:"total"`
+	Source    string    `json:"source"`
+	List      []ZyMovie `json:"list"`
+}
+type ZyDetailResult struct {
+	Code      int       `json:"code"`
+	Msg       string    `json:"msg"`
+	Page      int       `json:"page"`
 	Pagecount int       `json:"pagecount"`
 	Limit     string    `json:"limit"`
 	Total     int       `json:"total"`

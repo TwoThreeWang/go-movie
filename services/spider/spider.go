@@ -19,4 +19,5 @@ var ExternalApi = map[string]ExternalSpider{
 // ExternalSpider todo 外部数据调用接口，接口统一需实现的方法如下
 type ExternalSpider interface {
 	ExternalGetReport(configs.SpiderSites, string) (zyw.ZySearchResult, error) // 主动查询三方结果
+	ExternalGetById(configs.SpiderSites, string) (zyw.ZyDetailResult, error)   // 根据影片ID查询三方数据
 }
