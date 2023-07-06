@@ -27,8 +27,8 @@ func main() {
 		// 初始化Gin引擎
 		r := gin.Default()
 		// 指定静态资源目录
-		r.Static("/static", "./templates/web/static")
-		r.LoadHTMLGlob("templates/*/*.html")
+		r.Static("/public", "./templates/public")
+		//r.LoadHTMLGlob("templates/*/*.tmpl")
 		routers.RegisterIndexRoutes(r)
 		routers.RegisterAdminRoutes(r)
 		routers.RegisterLoginRoutes(r)

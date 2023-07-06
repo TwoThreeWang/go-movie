@@ -1,12 +1,13 @@
 <!doctype html>
 <meta charset="UTF-8">
 <title>
-    膨胀的电影
+    膨胀电影 - 搜索你想看的，看电影本该简单！
 </title>
 <meta name=viewport content="width=device-width,user-scalable=0">
-<link rel=stylesheet href="static/style.css">
+<link rel=stylesheet href="../public/static/style.css">
 <meta name=apple-mobile-web-app-capable content=yes>
 <meta name=apple-mobile-web-app-status-bar-style content=black-translucent>
+<link rel="shortcut icon " type="images/x-icon" href="public/favicon.ico">
 <!--<meta name="referrer" content="never">-->
 <body>
 <!-- 顶部导航 -->
@@ -21,7 +22,7 @@
 <script src="https://lf26-cdn-tos.bytecdntp.com/cdn/expire-1-M/axios/0.26.0/axios.min.js" type="application/javascript"></script>
 <!--中部主体-->
 <div id="content">
-    {{ block "content" . }}{{ end }}
+    {{block "content" . }}{{end}}
 </div>
 <!--中部主体 over-->
 

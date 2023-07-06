@@ -17,6 +17,7 @@ import (
 	"movie/utils/easylog"
 	"movie/utils/result"
 	"movie/utils/try"
+	"sort"
 	"strconv"
 	"strings"
 	"sync"
@@ -249,12 +250,18 @@ func SearchHistory(c *gin.Context) {
 func addSearchHistory(kw string) {
 	history := viper.GetString("search_history")
 	historys := strings.Split(history, ",")
+	index := sort.SearchStrings(historys, kw)
+	fmt.Println(historys)
+	fmt.Println(index)
+	if index < len(historys) {
+		return
+	}
 	historys = append(historys, kw)
 	if len(historys) > 20 {
 		// 只保留最新的20条记录
 		historys = historys[len(history)-20:]
 	}
-	str := strings.Join(historys, ", ")
+	str := strings.Join(historys, ",")
 	// 修改配置文件
 	viper.Set("search_history", str)
 	if err := viper.WriteConfig(); err != nil {

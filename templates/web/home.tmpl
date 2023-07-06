@@ -1,0 +1,100 @@
+{{ template "base.tmpl" . }}
+
+{{ define "content" }}
+<div class="main-body" id="app">
+    <div class="index-header">
+        <form action="/search">
+            <input type="text" placeholder="搜索你想看的，看电影本该简单..." name="kw">
+        </form>
+        <div class="search-history">
+            <span>别人在搜:</span>
+            <span>
+                <a :href="`/search?kw=${item}`" v-for="item in history_search">[[item]]</a>
+            </span>
+        </div>
+    </div>
+    <div class="index-hot">
+        <p class="title">热门电影</p>
+        <hr class="hr-edge-weak">
+        <div class="conn-load" v-if="douban_movies_load">正在查询豆瓣热搜电影数据，请稍后...</div>
+        <div class="index-hot-item">
+            <div class="movie" v-for="item in douban_movies">
+                <img class="poster" :src="`${item.cover}`" :alt="`${item.title} Movie Poster`" referrerPolicy="no-referrer" onerror="this.onerror=null;this.src='../public/static/img/img_err.png';">
+                <div class="movie-details">
+                    <a class="movie-title" :href="`/search?kw=${item.title}`" :title="`搜索《${item.title}》相关资源`">[[item.title]]</a>
+                    <div class="cast-list">
+                        <img src="../public/static/img/douban.png" class="douban-logo"/>
+                        <span>[[item.rate]]</span>
+                        <br>
+                        <br>
+                        <span><a :href="`${item.url}`" class="douban-link" target="_blank">去豆瓣 >>></a></span>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <br><br><br>
+        <p class="title">热门电视剧</p>
+        <hr class="hr-edge-weak">
+        <div class="conn-load" v-if="douban_tv_load">正在查询豆瓣热搜电视剧数据，请稍后...</div>
+        <div class="index-hot-item">
+            <div class="movie" v-for="item in douban_tv">
+                <img class="poster" :src="`${item.cover}`" :alt="`${item.title} Movie Poster`" referrerPolicy="no-referrer" onerror="this.onerror=null;this.src='../public/static/img/img_err.png';">
+                <div class="movie-details">
+                    <a class="movie-title" :href="`/search?kw=${item.title}`" :title="`搜索《${item.title}》相关资源`">[[item.title]]</a>
+                    <div class="cast-list">
+                        <img src="../public/static/img/douban.png" class="douban-logo"/>
+                        <span>[[item.rate]]</span>
+                        <br>
+                        <br>
+                        <span><a :href="`${item.url}`" class="douban-link" target="_blank">去豆瓣 >>></a></span>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<script>
+    const { createApp } = Vue
+    createApp({
+        delimiters: ['[[', ']]'], // 将标记符号修改为 [[ 和 ]]
+        data() {
+            return {
+                history_search : [],
+                douban_movies : [],
+                douban_tv:[],
+                douban_movies_load:true,
+                douban_tv_load:true,
+            }
+        },
+        mounted() {
+            // 组件完成初始渲染并创建 DOM 节点后运行
+            // 获取搜索历史
+            axios.get(api_url+'/searchhistory')
+                .then(response => {
+                    this.history_search = response.data['data'];
+                })
+                .catch(error => {
+                    console.log(error);
+                });
+            // 豆瓣电影热搜
+            axios.get(api_url+'/douban?type=movie')
+                .then(response => {
+                    this.douban_movies = response.data['data'];
+                    this.douban_movies_load = false;
+                })
+                .catch(error => {
+                    console.log(error);
+                });
+            // 豆瓣电视剧热搜
+            axios.get(api_url+'/douban?type=tv')
+                .then(response => {
+                    this.douban_tv = response.data['data'];
+                    this.douban_tv_load = false;
+                })
+                .catch(error => {
+                    console.log(error);
+                });
+        }
+    }).mount('#app')
+</script>
+{{ end }}
