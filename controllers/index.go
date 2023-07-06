@@ -251,8 +251,6 @@ func addSearchHistory(kw string) {
 	history := viper.GetString("search_history")
 	historys := strings.Split(history, ",")
 	index := sort.SearchStrings(historys, kw)
-	fmt.Println(historys)
-	fmt.Println(index)
 	if index < len(historys) {
 		return
 	}
