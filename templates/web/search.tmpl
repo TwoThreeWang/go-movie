@@ -16,7 +16,7 @@
     <div class="index-hot">
         <p class="title">{{.kw}} 搜索结果</p>
         <hr class="hr-edge-weak">
-        <div class="conn-load" v-if="search_load" id="msg">正在聚合搜索多个影视资源站，请稍后...</div>
+        <div class="conn-load" v-if="search_load" id="msg">正在聚合搜索多个影视资源站，预计剩余 [[ timeLeft ]] 秒...</div>
         <div class="index-hot-item">
             <div class="movie" v-for="item in movies">
                 <img class="poster" :src="`${item.vod_pic}`" :alt="`${item.vod_name} Movie Poster`" referrerPolicy="no-referrer" onerror="this.onerror=null;this.src='../public/static/img/img_err.png';">
@@ -50,6 +50,7 @@
                 history_search : [],
                 movies : [],
                 search_load:true,
+                timeLeft: 30, // 倒计时剩余时间
             }
         },
         mounted() {
@@ -75,6 +76,10 @@
                 .catch(error => {
                     console.log(error);
                 });
+            // 设置定时器，每秒更新一次倒计时剩余时间
+            setInterval(() => {
+                  this.timeLeft = this.timeLeft - 1;
+                }, 1000);
         }
     }).mount('#app')
 </script>

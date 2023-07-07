@@ -16,7 +16,7 @@
     <div class="index-hot">
         <p class="title">热门电影</p>
         <hr class="hr-edge-weak">
-        <div class="conn-load" v-if="douban_movies_load">正在查询豆瓣热搜电影数据，请稍后...</div>
+        <div class="conn-load" v-if="douban_movies_load">正在查询豆瓣热搜电影数据...</div>
         <div class="index-hot-item">
             <div class="movie" v-for="item in douban_movies">
                 <img class="poster" :src="`${item.cover}`" :alt="`${item.title} Movie Poster`" referrerPolicy="no-referrer" onerror="this.onerror=null;this.src='../public/static/img/img_err.png';">
@@ -35,10 +35,10 @@
         <br><br><br>
         <p class="title">热门电视剧</p>
         <hr class="hr-edge-weak">
-        <div class="conn-load" v-if="douban_tv_load">正在查询豆瓣热搜电视剧数据，请稍后...</div>
+        <div class="conn-load" v-if="douban_tv_load">正在查询豆瓣热搜电视剧数据...</div>
         <div class="index-hot-item">
             <div class="movie" v-for="item in douban_tv">
-                <img class="poster" :src="`${item.cover}`" :alt="`${item.title} Movie Poster`" referrerPolicy="no-referrer" onerror="this.onerror=null;this.src='../public/static/img/img_err.png';">
+                <img class="poster" :src="`${item.cover}`" :alt="`${item.title} Movie Poster`" referrerPolicy="no-referrer">
                 <div class="movie-details">
                     <a class="movie-title" :href="`/search?kw=${item.title}`" :title="`搜索《${item.title}》相关资源`">[[item.title]]</a>
                     <div class="cast-list">

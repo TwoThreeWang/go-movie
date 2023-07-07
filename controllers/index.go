@@ -17,7 +17,6 @@ import (
 	"movie/utils/easylog"
 	"movie/utils/result"
 	"movie/utils/try"
-	"sort"
 	"strconv"
 	"strings"
 	"sync"
@@ -250,8 +249,7 @@ func SearchHistory(c *gin.Context) {
 func addSearchHistory(kw string) {
 	history := viper.GetString("search_history")
 	historys := strings.Split(history, ",")
-	index := sort.SearchStrings(historys, kw)
-	if index < len(historys) {
+	if contains(historys, kw) {
 		return
 	}
 	historys = append(historys, kw)
@@ -265,4 +263,14 @@ func addSearchHistory(kw string) {
 	if err := viper.WriteConfig(); err != nil {
 		easylog.Log.Error(err.Error())
 	}
+}
+
+// 判断字符串是否存在于字符串切片中
+func contains(strs []string, s string) bool {
+	for _, str := range strs {
+		if strings.Contains(str, s) {
+			return true
+		}
+	}
+	return false
 }
