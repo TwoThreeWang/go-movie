@@ -7,13 +7,13 @@
             <input type="text" placeholder="搜索你想看的，看电影本该简单..." name="kw">
         </form>
         <div class="search-history">
-            <span>别人在搜:</span>
-            <span>
-                <a :href="`/search?kw=${item}`" v-for="item in history_search">[[item]]</a>
-            </span>
+            <a :href="`/search?kw=${item}`" v-for="item in history_search">[[item]]</a>
         </div>
     </div>
     <div class="index-hot">
+        <p class="title">观看历史 <small>最近十部</small></p>
+        <hr class="hr-edge-weak">
+        <div class="index-history" id="index-history"><center><br>暂无观看历史哇，搜索看看自己喜欢的视频吧！<br><br></center></div>
         <p class="title">热门电影</p>
         <hr class="hr-edge-weak">
         <div class="conn-load" v-if="douban_movies_load">正在查询豆瓣热搜电影数据...</div>
@@ -66,8 +66,22 @@
                 douban_tv_load:true,
             }
         },
+        methods: {
+            watch_history(){
+                var items = myQueue.getItems();
+                if(items.length>0){
+                    var index_watch_history = "";
+                    for(var i = 0; i < items.length; i++){
+                        var item = items[i].split('#')
+                        index_watch_history+='<a href="/play?source='+item[0]+'&vid='+item[1]+'&play='+item[3]+'">'+item[2]+'</a>';
+                    }
+                    document.getElementById("index-history").innerHTML=index_watch_history;
+                }
+            }
+        },
         mounted() {
             // 组件完成初始渲染并创建 DOM 节点后运行
+            this.watch_history();
             // 获取搜索历史
             axios.get(api_url+'/searchhistory')
                 .then(response => {

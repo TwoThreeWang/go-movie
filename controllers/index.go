@@ -253,9 +253,9 @@ func addSearchHistory(kw string) {
 		return
 	}
 	historys = append(historys, kw)
-	if len(historys) > 20 {
-		// 只保留最新的20条记录
-		historys = historys[len(history)-20:]
+	if len(historys) > 10 {
+		// 只保留最新的10条记录
+		historys = historys[len(historys)-10:]
 	}
 	str := strings.Join(historys, ",")
 	// 修改配置文件

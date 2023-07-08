@@ -7,14 +7,11 @@
             <input type="text" placeholder="搜索你想看的，看电影本该简单..." name="kw" value="{{.kw}}">
         </form>
         <div class="search-history">
-            <span>别人在搜:</span>
-            <span>
-                <a :href="`/search?kw=${item}`" v-for="item in history_search">[[item]]</a>
-            </span>
+            <a :href="`/search?kw=${item}`" v-for="item in history_search">[[item]]</a>
         </div>
     </div>
     <div class="index-hot">
-        <p class="title">{{.kw}} 搜索结果</p>
+        <p class="title">{{.kw}} 搜索结果 | <a href="/" style="color:#9f9f9f">首页</a></p>
         <hr class="hr-edge-weak">
         <div class="conn-load" v-if="search_load" id="msg">正在聚合搜索多个影视资源站，预计剩余 [[ timeLeft ]] 秒...</div>
         <div class="index-hot-item">
@@ -33,7 +30,7 @@
                         <br>
                         <span>[[item.vod_year]]</span>
                         <br>
-                        <span><a :href="`/detail?source=${item.source}&vid=${item.vod_id}`" class="douban-link" target="_blank">播放 >>></a></span>
+                        <span><a :href="`/play?source=${item.source}&vid=${item.vod_id}`" class="douban-link" target="_blank">播放 >>></a></span>
                     </div>
                 </div>
             </div>
@@ -50,7 +47,7 @@
                 history_search : [],
                 movies : [],
                 search_load:true,
-                timeLeft: 30, // 倒计时剩余时间
+                timeLeft: 15, // 倒计时剩余时间
             }
         },
         mounted() {
@@ -65,7 +62,6 @@
             // 搜索接口
             axios.get(api_url+'/search?kw={{.kw}}')
                 .then(response => {
-                    console.log(response.data['data']);
                     this.movies = response.data['data'];
                     if(this.movies == null){
                         document.getElementById("msg").innerHTML="暂时没有搜索到影片资源，过段时间再试试呗！";
@@ -77,9 +73,14 @@
                     console.log(error);
                 });
             // 设置定时器，每秒更新一次倒计时剩余时间
-            setInterval(() => {
-                  this.timeLeft = this.timeLeft - 1;
-                }, 1000);
+            this.timer = setInterval(() => {
+                if(this.timeLeft > 0){
+                    this.timeLeft = this.timeLeft - 1;
+                }else{
+                    document.getElementById("msg").innerHTML="暂时没有搜索到影片资源，过段时间再试试呗！";
+                    clearInterval(this.timer);
+                }
+            }, 1000);
         }
     }).mount('#app')
 </script>

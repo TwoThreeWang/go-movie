@@ -1,10 +1,142 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <title>Title</title>
-</head>
-<body>
-detail
-</body>
-</html>
+{{ template "base.tmpl" . }}
+
+{{ define "content" }}
+<div class="main-body" id="app">
+    <div class="index-hot">
+        <div class="conn-load" v-if="search_load" id="msg">正在获取视频详情...</div>
+        <div class="detail">
+            <img class="poster" :src="`${movie.VodPic}`" :alt="`${movie.VodName} Movie Poster`" referrerPolicy="no-referrer" onerror="this.onerror=null;this.src='../public/static/img/img_err.png';">
+            <div class="item">
+                <p class="title">((movie.VodName))</p>
+                <p>((movie.VodEn))</p>
+                <a class="tag play_btn" href="/play?source={{.source}}&vid={{.vid}}" style="padding:5px 15px">立即播放</a>
+                <p class="tag">((movie.Source))</p><p class="tag">((movie.TypeName))</p><p class="tag">((movie.VodTag))</p><p class="tag">((movie.VodArea))</p><p class="tag">((movie.VodLang))</p><p class="tag">((movie.VodYear))</p>
+                <br><br>
+                <p>又名：((movie.VodSub))</p>
+                <p>导演：((movie.VodDirector))</p>
+                <p>主演：((movie.VodActor))</p>
+                <p>上映：((movie.VodPubdate))</p>
+                <p>集数：((movie.VodRemarks))（<span v-if="`${movie.Isend} == 1`">已完结</span><span v-else>更新中</span>)</p>
+                <p>豆瓣：<a :href="`https://movie.douban.com/subject/${movie.VodDoubanId}`" target="_blank">((movie.VodName))（((movie.VodDoubanScore))）</a></p>
+                <p>更新：((movie.VodTime))</p>
+                <p>剧情：((movie.VodContent))</p>
+            </div>
+        </div>
+        <br><br>
+        <div class="module-player-list">
+            <p class="title">选集播放</p>
+            <hr class="hr-edge-weak">
+            <div class="sort-item auto-grid">
+                <a v-for="(value, key) in play_link" :href="`/play?source={{.source}}&vid={{.vid}}&play=${value[1]}`" :class="classObject(`${value[1]}`)" :key="key">((value[0]))</a>
+            </div>
+        </div>
+        <!--        <br>-->
+        <!--        <div class="module-player-list">-->
+        <!--            <p class="title">选集下载</p>-->
+        <!--            <hr class="hr-edge-weak">-->
+        <!--            <div class="sort-item auto-grid">-->
+        <!--                <a v-for="(key, value) in down_link" :href="`/play?source={{.source}}&vid={{.vid}}&play=${key}`">((value))</a>-->
+        <!--            </div>-->
+        <!--        </div>-->
+        <div class="index-hot">
+            <p class="title">更多视频源</p>
+            <hr class="hr-edge-weak">
+            <div class="index-hot-item">
+                <div class="movie" v-for="item in movies" id="more_video">
+                    <img class="poster" :src="`${item.vod_pic}`" :alt="`${item.vod_name} Movie Poster`" referrerPolicy="no-referrer" onerror="this.onerror=null;this.src='../public/static/img/img_err.png';">
+                    <div class="movie-details">
+                        <a class="movie-title" :href="`/detail?source=${item.source}&vid=${item.vod_id}`" :title="`查看《${item.vod_name}》影片详情`">((item.vod_name))</a>
+                        <div class="cast-list">
+                        <span>
+                            ((item.vod_area))｜((item.type_name))
+                        </span>
+                            <br>
+                            <span>((item.vod_director))(导)</span>
+                            <br>
+                            <span>((item.source))（((item.vod_remarks))）</span>
+                            <br>
+                            <span>((item.vod_year))</span>
+                            <br>
+                            <span><a :href="`/play?source=${item.source}&vid=${item.vod_id}`" class="douban-link" target="_blank">播放 >>></a></span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<script>
+    document.title = "视频详情 - 膨胀电影";
+    function get_link_dict(str){
+        // 拆分视频链接
+        var index = 0
+        for (var item_one of str.split('$$$')) {
+            if (item_one.indexOf(".m3u8") != -1){
+                // 先拆分每一集
+                for(var item of item_one.split('#')) {
+                    index += 1
+                    var list_two = item.split('$') // 再拆分标题和链接
+                    app.play_link.set(list_two[0],btoa(list_two[1]))
+                    if(app.play==""&&index==1){
+                        app.play = list_two[1]
+                    }else if(app.play==list_two[1]&&app.play_name==""){
+                        app.play_name = list_two[0]
+                    }
+                }
+            }
+        }
+    }
+    const { createApp } = Vue
+    var app = createApp({
+        delimiters: ['((', '))'], // 将标记符号修改为 (( 和 ))
+        data() {
+            return {
+                movie : {},
+                search_load:true,
+                play_link:new Map([]),
+                down_link:{},
+                movies:{},
+            }
+        },
+        methods: {
+            more_movie(vod_name) {
+                // 搜索接口
+                axios.get(api_url+'/search?kw='+vod_name)
+                    .then(response => {
+                        this.movies = response.data['data'];
+                        if(this.movies == null){
+                            document.getElementById("more_video").innerHTML="<center>暂时没有搜索到相关影片资源！</center>";
+                        }
+                    })
+                    .catch(error => {
+                        console.log(error);
+                    });
+            }
+        },
+        mounted() {
+            // 获取影片详情接口
+            axios.get(api_url+'/detail?source={{.source}}&id={{.vid}}')
+                .then(response => {
+                    this.movie = response.data['data'];
+                    if(this.movie == null){
+                        document.getElementById("msg").innerHTML="没有获取到影片资源，重新搜索试试？";
+                    }else{
+                        document.title = this.movie['VodName'] + " 视频详情 - 膨胀电影";
+                        get_link_dict(this.movie['VodPlayUrl']);
+                        // this.down_link = get_link_dict(this.movie['VodDownUrl']);
+                        this.search_load = false;
+                        this.more_movie(this.movie['VodName']);
+                    }
+                })
+                .catch(error => {
+                    console.log(error);
+                });
+        },
+        computed: {
+            classObject: () => link => ({
+                'sort-item-check': link === btoa(app.play)
+            })
+        }
+    }).mount('#app')
+</script>
+{{ end }}

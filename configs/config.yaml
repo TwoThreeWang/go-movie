@@ -1,4 +1,4 @@
-search_history: ',长风渡,惊天营救2,哈哈哈哈哈,五十公里桃花坞,长风渡,哈哈哈哈哈,犯罪都市3,五十公里桃花坞,哈哈哈哈哈,犯罪都市,三体'
+search_history: 三体,人生路不熟,毒舌律师,惊天营救2,小姨子的姐妹情谊,玉骨遥,银河护卫队3,犯罪都市3,哈哈哈哈哈第三季,长风渡
 sites:
     - baseurl: https://sdzyapi.com/api.php
       key: 闪电资源
@@ -6,6 +6,22 @@ sites:
       spiderkey: zyw
     - baseurl: https://api.xinlangapi.com/xinlangapi.php
       key: 新浪资源
+      playurl: ""
+      spiderkey: zyw
+    - baseurl: https://api.guangsuapi.com/api.php
+      key: 光速资源
+      playurl: ""
+      spiderkey: zyw
+    - baseurl: https://collect.wolongzy.cc/api.php
+      key: 卧龙资源
+      playurl: ""
+      spiderkey: zyw
+    - baseurl: https://caiji.kczyapi.com/api.php
+      key: 快车资源
+      playurl: ""
+      spiderkey: zyw
+    - baseurl: https://cj.lziapi.com/api.php
+      key: 量子资源
       playurl: ""
       spiderkey: zyw
 spider_timeout: 10

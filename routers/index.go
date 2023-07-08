@@ -17,27 +17,31 @@ func RegisterIndexRoutes(r *gin.Engine) {
 	}
 	r.HTMLRender = createMyRender()
 	web := r.Group("/")
-	{
+	{ // 首页
 		web.GET("/", func(c *gin.Context) {
 			c.HTML(200, "home", nil)
-		}) // 首页
+		})
+		// 搜索结果页
 		web.GET("/search", func(c *gin.Context) {
 			c.HTML(200, "search", gin.H{
 				"kw": c.Query("kw"),
 			})
-		}) // 搜索结果页
+		})
+		// 影片详情页
 		web.GET("/detail", func(c *gin.Context) {
 			c.HTML(200, "detail", gin.H{
 				"source": c.Query("source"),
 				"vid":    c.Query("vid"),
 			})
-		}) // 影片详情页
+		})
+		// 播放页
 		web.GET("/play", func(c *gin.Context) {
 			c.HTML(200, "play", gin.H{
 				"source": c.Query("source"),
 				"vid":    c.Query("vid"),
+				"play":   c.Query("play"),
 			})
-		}) // 播放页
+		})
 	}
 }
 
