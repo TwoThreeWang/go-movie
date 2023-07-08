@@ -19,12 +19,11 @@
         <div class="conn-load" v-if="douban_movies_load">正在查询豆瓣热搜电影数据...</div>
         <div class="index-hot-item">
             <div class="movie" v-for="item in douban_movies">
-                <img class="poster" :src="`${item.cover}`" :alt="`${item.title} Movie Poster`" referrerPolicy="no-referrer" onerror="this.onerror=null;this.src='../public/static/img/img_err.png';">
+                <img class="lazyload poster" :data-src="`${item.cover}`" :alt="`${item.title} Movie Poster`" referrerPolicy="no-referrer" src='../public/static/img/img_err.png' :onerror="`this.onerror=null;this.src='/doubanimg?link=${item.cover}';`">
                 <div class="movie-details">
                     <a class="movie-title" :href="`/search?kw=${item.title}`" :title="`搜索《${item.title}》相关资源`">[[item.title]]</a>
                     <div class="cast-list">
-                        <img src="../public/static/img/douban.png" class="douban-logo"/>
-                        <span>[[item.rate]]</span>
+                        <span><div class="douban-icon">豆</div> [[item.rate]]</span>
                         <br>
                         <br>
                         <span><a :href="`${item.url}`" class="douban-link" target="_blank">去豆瓣 >>></a></span>
@@ -38,12 +37,11 @@
         <div class="conn-load" v-if="douban_tv_load">正在查询豆瓣热搜电视剧数据...</div>
         <div class="index-hot-item">
             <div class="movie" v-for="item in douban_tv">
-                <img class="poster" :src="`${item.cover}`" :alt="`${item.title} Movie Poster`" referrerPolicy="no-referrer">
+                <img class="lazyload poster" :data-src="`${item.cover}`" :alt="`${item.title} Movie Poster`" referrerPolicy="no-referrer" src='../public/static/img/img_err.png' :onerror="`this.onerror=null;this.src='/doubanimg?link=${item.cover}';`">
                 <div class="movie-details">
                     <a class="movie-title" :href="`/search?kw=${item.title}`" :title="`搜索《${item.title}》相关资源`">[[item.title]]</a>
                     <div class="cast-list">
-                        <img src="../public/static/img/douban.png" class="douban-logo"/>
-                        <span>[[item.rate]]</span>
+                        <span><div class="douban-icon">豆</div> [[item.rate]]</span>
                         <br>
                         <br>
                         <span><a :href="`${item.url}`" class="douban-link" target="_blank">去豆瓣 >>></a></span>

@@ -24,6 +24,8 @@ func main() {
 	easylog.Log.Info(`程序运行`)
 	// 配置文件初始化
 	if configInit() {
+		// 将 Gin 的运行模式设置为 "release"，默认为debug模式
+		gin.SetMode(gin.ReleaseMode)
 		// 初始化Gin引擎
 		r := gin.Default()
 		// 指定静态资源目录
@@ -32,7 +34,7 @@ func main() {
 		routers.RegisterIndexRoutes(r)
 		routers.RegisterAdminRoutes(r)
 		routers.RegisterLoginRoutes(r)
-		err := r.Run()
+		err := r.Run(":8787")
 		if err != nil {
 			easylog.Log.Info(err)
 		}

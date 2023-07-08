@@ -109,6 +109,8 @@ input:focus{outline:none;}
     align-items: center;
     padding: 15px 5px 15px 15px;
     border-bottom: 1px solid #d0d0d58f;
+    width: 95%;
+    overflow: hidden;
 }
 .index-hot-item .movie:hover{
     background: linear-gradient(to right, #e6e4e4, #fff);
@@ -125,6 +127,8 @@ input:focus{outline:none;}
 
 .index-hot-item .movie-details {
     flex: 1;
+    overflow: hidden;
+    width: 60%;
 }
 
 .index-hot-item .movie-title {
@@ -139,10 +143,15 @@ input:focus{outline:none;}
     margin-bottom: 10px;
 }
 
-.movie .douban-logo{
+.douban-icon{
     width: 20px;
     vertical-align: text-bottom;
     margin-right: 5px;
+    border-radius: 7px;
+    background-color: #42bd56;
+    color: #fff;
+    display: initial;
+    padding: 3px;
 }
 
 .movie .douban-link{
@@ -151,7 +160,7 @@ input:focus{outline:none;}
 }
 
 .index-hot-item .cast-list span{
-    line-height: 23px;
+    display: inline-block;
     font-size: 12px;
     z-index: 2;
     color: #666;
@@ -258,6 +267,7 @@ input:focus{outline:none;}
 }
 .play .item{
     width: 100%;
+    grid-column: 2 !important;
 }
 .play-box{
     border-radius: 3px;
@@ -280,7 +290,7 @@ input:focus{outline:none;}
 
 @media screen and (max-width: 1199px) {
     .index-hot-item {
-        grid-template-columns: repeat(4, 1fr);
+        grid-template-columns: repeat(2, 1fr);
     }
     .auto-grid{--auto-grid-min-size:10rem !important}
 }

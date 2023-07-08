@@ -42,6 +42,8 @@ func RegisterIndexRoutes(r *gin.Engine) {
 				"play":   c.Query("play"),
 			})
 		})
+		// 豆瓣图片代理
+		web.GET("/doubanimg", controllers.DoubanImg)
 	}
 }
 

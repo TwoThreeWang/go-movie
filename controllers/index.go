@@ -8,6 +8,8 @@ import (
 	"github.com/patrickmn/go-cache"
 	"github.com/spf13/viper"
 	"gorm.io/gorm"
+	"io"
+	"log"
 	"movie/configs"
 	"movie/repositories"
 	"movie/services/spider"
@@ -17,6 +19,7 @@ import (
 	"movie/utils/easylog"
 	"movie/utils/result"
 	"movie/utils/try"
+	"net/http"
 	"strconv"
 	"strings"
 	"sync"
@@ -243,6 +246,60 @@ func SearchHistory(c *gin.Context) {
 	history := viper.GetString("search_history")
 	historys := strings.Split(history, ",")
 	result.Ok(c, historys)
+}
+
+// DoubanImg 豆瓣图片代理
+func DoubanImg(c *gin.Context) {
+	link := c.Query("link")
+	header := map[string]string{
+		"Referer":    "https://movie.douban.com/",
+		"User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/114.0.0.0 Safari/537.36 Edg/114.0.1823.67",
+		"Host":       "movie.douban.com",
+		"Cookie":     "bid=jyRD6omH2o0; douban-fav-remind=1; ll=\"108288\"; ct=y; frodotk_db=\"c09da24285e2c1b041d8e6c791a84510\"; push_noty_num=0; push_doumail_num=0; ap_v=0,6.0; bid=RsvEZPEuiWQ",
+		"Accept":     "*/*",
+		//"Accept-Encoding":    "gzip, deflate, br",
+		"Accept-Language":    "zh-CN,zh;q=0.9,en;q=0.8",
+		"Connection":         "keep-alive",
+		"Dnt":                "1",
+		"Sec-Ch-Ua":          "\"Not.A/Brand\";v=\"8\", \"Chromium\";v=\"114\", Microsoft Edge\";v=\"114\"",
+		"Sec-Ch-Ua-Mobile":   "?0",
+		"Sec-Ch-Ua-Platform": "\"Windows\"",
+		"Sec-Fetch-Dest":     "empty",
+		"Sec-Fetch-Mode":     "cors",
+		"Sec-Fetch-Site":     "same-origin",
+		"X-Requested-With":   "XMLHttpRequest",
+	}
+	// 创建一个新的请求
+	req, err := http.NewRequest("GET", link, nil)
+	if err != nil {
+		log.Printf("Error creating request: %v", err)
+		c.AbortWithStatusJSON(http.StatusInternalServerError, gin.H{"error": "Failed to create request"})
+		return
+	}
+	// 添加 Header
+	if header != nil {
+		for k, v := range header {
+			req.Header.Add(k, v)
+		}
+	}
+	// 发送请求
+	client := http.Client{}
+	resp, err := client.Do(req)
+	if err != nil {
+		log.Printf("Error sending request: %v", err)
+		c.AbortWithStatusJSON(http.StatusInternalServerError, gin.H{"error": "Failed to get image"})
+		return
+	}
+	defer resp.Body.Close()
+	// 设置响应头，告诉浏览器返回的是图片格式
+	c.Header("Content-Type", resp.Header.Get("Content-Type"))
+	// 将图片写入响应体
+	_, err = io.Copy(c.Writer, resp.Body)
+	if err != nil {
+		log.Printf("Error writing response: %v", err)
+		c.AbortWithStatusJSON(http.StatusInternalServerError, gin.H{"error": "Failed to write image"})
+		return
+	}
 }
 
 // 增加一条搜索记录
