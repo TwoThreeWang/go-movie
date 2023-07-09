@@ -127,7 +127,7 @@
                 .then(response => {
                     this.movie = response.data['data'];
                     if(this.movie == null){
-                        document.getElementById("msg").innerHTML="没有获取到影片资源，重新搜索试试？";
+                        document.getElementById("msg").innerHTML="没有获取到影片资源，稍等一会刷新页面或者重新搜索试试？";
                     }else{
                         document.title = this.movie['VodName'] + " 视频详情 - 膨胀电影";
                         get_link_dict(this.movie['VodPlayUrl']);

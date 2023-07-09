@@ -206,6 +206,7 @@ func GetMovieInfo(c *gin.Context) {
 	var movie repositories.Movies
 	res := db.Where("source = ? and vod_id = ?", source, VodId).First(&movie)
 	if res.Error != nil {
+		go UpdataMovieInfo(source, VodId)
 		if errors.Is(res.Error, gorm.ErrRecordNotFound) {
 			result.FailNoMsg(c, result.NotFound)
 			c.Abort()
