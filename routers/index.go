@@ -30,8 +30,9 @@ func RegisterIndexRoutes(r *gin.Engine) {
 		// 影片详情页
 		web.GET("/detail", func(c *gin.Context) {
 			c.HTML(200, "detail", gin.H{
-				"source": c.Query("source"),
-				"vid":    c.Query("vid"),
+				"source":  c.Query("source"),
+				"vid":     c.Query("vid"),
+				"refresh": c.Query("refresh"),
 			})
 		})
 		// 播放页

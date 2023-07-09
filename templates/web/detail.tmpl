@@ -24,10 +24,10 @@
         </div>
         <br><br>
         <div class="module-player-list">
-            <p class="title">选集播放</p>
+            <p class="title">选集播放 <small v-if="reFresh">（<a href="/detail?source={{.source}}&vid={{.vid}}&refresh=1">强制刷新三方数据</a>）</small></p>
             <hr class="hr-edge-weak">
             <div class="sort-item auto-grid">
-                <a v-for="(value, key) in play_link" :href="`/play?source={{.source}}&vid={{.vid}}&play=${value[1]}`" :class="classObject(`${value[1]}`)" :key="key">((value[0]))</a>
+                <a v-for="(value, key) in play_link" :href="`/detail?source={{.source}}&vid={{.vid}}&play=${value[1]}`" :class="classObject(`${value[1]}`)" :key="key">((value[0]))</a>
             </div>
         </div>
         <!--        <br>-->
@@ -96,6 +96,7 @@
                 play_link:new Map([]),
                 down_link:{},
                 movies:{},
+                reFresh:false,
             }
         },
         methods: {
@@ -115,7 +116,14 @@
         },
         mounted() {
             // 获取影片详情接口
-            axios.get(api_url+'/detail?source={{.source}}&id={{.vid}}')
+            var refresh = ""
+            if({{.refresh}}=="1"){
+                refresh = "&refresh=1"
+                this.reFresh = false
+            }else{
+                this.reFresh = true
+            }
+            axios.get(api_url+'/detail?source={{.source}}&id={{.vid}}'+refresh)
                 .then(response => {
                     this.movie = response.data['data'];
                     if(this.movie == null){

@@ -190,14 +190,17 @@ func Index(c *gin.Context) {
 
 // GetMovieInfo 查询影片信息接口
 func GetMovieInfo(c *gin.Context) {
-	source := c.Query("source") // 来源
-	VodId := c.Query("id")      // 影片ID
+	source := c.Query("source")   // 来源
+	VodId := c.Query("id")        // 影片ID
+	refresh := c.Query("refresh") // 强制更新
 	cacheKey := source + VodId
-	if x, found := easycache.C.Get(cacheKey); found {
-		datas := x.(repositories.Movies)
-		result.Ok(c, datas)
-		c.Abort()
-		return
+	if refresh != "1" {
+		if x, found := easycache.C.Get(cacheKey); found {
+			datas := x.(repositories.Movies)
+			result.Ok(c, datas)
+			c.Abort()
+			return
+		}
 	}
 	db := repositories.GetDB()
 	var movie repositories.Movies
@@ -213,7 +216,7 @@ func GetMovieInfo(c *gin.Context) {
 		return
 	}
 	now := time.Now()
-	if movie.UpdatedAt.Year() != now.Year() || movie.UpdatedAt.Month() != now.Month() || movie.UpdatedAt.Day() != now.Day() {
+	if movie.UpdatedAt.Year() != now.Year() || movie.UpdatedAt.Month() != now.Month() || movie.UpdatedAt.Day() != now.Day() || refresh == "1" {
 		// 数据最后更新时间不是今天，后台更新这条数据
 		go UpdataMovieInfo(source, VodId)
 	}
