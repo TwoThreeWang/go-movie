@@ -250,6 +250,7 @@ func UpdataMovieInfo(source string, VodId string) {
 		data.Source = source
 		datas = append(datas, data)
 	}
+	fmt.Println(datas)
 	saveDb(datas)
 }
 
