@@ -9,6 +9,7 @@ echo $branch
 echo $1
 #git项目路径
 cd /www/wwwroot/go_movie_git && \
+git reset --hard origin/master && \
 git pull  && \
 echo "处理完成"
 exit 0
