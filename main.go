@@ -1,6 +1,8 @@
 package main
 
 import (
+	//"compress/gzip"
+	"github.com/gin-contrib/gzip"
 	"github.com/gin-gonic/gin"
 	"github.com/spf13/viper"
 	"movie/routers"
@@ -25,9 +27,10 @@ func main() {
 	// 配置文件初始化
 	if configInit() {
 		// 将 Gin 的运行模式设置为 "release"，默认为debug模式
-		gin.SetMode(gin.ReleaseMode)
+		//gin.SetMode(gin.ReleaseMode)
 		// 初始化Gin引擎
 		r := gin.Default()
+		r.Use(gzip.Gzip(gzip.DefaultCompression))
 		// 指定静态资源目录
 		r.Static("/public", "./templates/public")
 		//r.LoadHTMLGlob("templates/*/*.tmpl")

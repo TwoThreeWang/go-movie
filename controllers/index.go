@@ -192,6 +192,13 @@ func Index(c *gin.Context) {
 func GetMovieInfo(c *gin.Context) {
 	source := c.Query("source") // 来源
 	VodId := c.Query("id")      // 影片ID
+	cacheKey := source + VodId
+	if x, found := easycache.C.Get(cacheKey); found {
+		datas := x.(repositories.Movies)
+		result.Ok(c, datas)
+		c.Abort()
+		return
+	}
 	db := repositories.GetDB()
 	var movie repositories.Movies
 	res := db.Where("source = ? and vod_id = ?", source, VodId).First(&movie)
@@ -210,6 +217,7 @@ func GetMovieInfo(c *gin.Context) {
 		// 数据最后更新时间不是今天，后台更新这条数据
 		go UpdataMovieInfo(source, VodId)
 	}
+	easycache.C.Set(cacheKey, movie, cache.DefaultExpiration)
 	result.Ok(c, movie)
 }
 

@@ -7,6 +7,8 @@ input,textarea{box-sizing: border-box;-webkit-box-sizing: border-box;-moz-box-si
 p{
     padding: 0;
     margin: 0;
+    word-break: break-all;
+    overflow-wrap: break-word;
 }
 a {
     cursor: pointer;
@@ -18,6 +20,14 @@ a {
 }
 a:hover{
     color:#ff2a14 !important;
+}
+img, iframe{
+    background: #f6f7f9;
+    animation: fadeIn 3s;
+    -webkit-animation: fadeIn 3s;
+    -moz-animation: fadeIn 3s;
+    -o-animation: fadeIn 3s;
+    -ms-animation: fadeIn 3s;
 }
 .header-container {
     display: grid;
@@ -316,4 +326,48 @@ input:focus{outline:none;}
     .sort-item{--auto-grid-min-size: 10rem !important;}
     .auto-grid{--auto-grid-min-size:6rem !important}
 
+}
+@keyframes fadeIn {
+    0% {
+        opacity: 0;
+    }
+    100% {
+        opacity: 1;
+    }
+}
+
+@-ms-keyframes fadeIn {
+    0% {
+        opacity: 0;
+    }
+    100% {
+        opacity: 1;
+    }
+}
+
+@-o-keyframes fadeIn {
+    0% {
+        opacity: 0;
+    }
+    100% {
+        opacity: 1;
+    }
+}
+
+@-webkit-keyframes fadeIn {
+    0% {
+        opacity: 0;
+    }
+    100% {
+        opacity: 1;
+    }
+}
+
+@-moz-keyframes fadeIn {
+    0% {
+        opacity: 0;
+    }
+    100% {
+        opacity: 1;
+    }
 }

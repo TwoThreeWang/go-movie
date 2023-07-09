@@ -1,4 +1,5 @@
 <!doctype html>
+<script src="../public/static/instantpage-5.2.0.js"></script>
 <meta charset="UTF-8">
 <title>
     膨胀电影 - 搜索你想看的，看电影本该简单！
@@ -9,7 +10,8 @@
 <meta name=apple-mobile-web-app-status-bar-style content=black-translucent>
 <link rel="shortcut icon " type="images/x-icon" href="public/favicon.ico">
 <meta name="referrer" content="never">
-<body>
+<meta http-equiv="Cache-Control" content="public, max-age=86400">
+<body data-instant-allow-query-string data-instant-allow-external-links>
 <!-- 顶部导航 -->
 <div class="headerpage" id="headerpage">
     {{ block "headerpage" . }}{{ end }}
@@ -66,5 +68,15 @@
         document.getElementById("qrcode-text").innerHTML="电脑使用本站体验更佳";
     }
 </script>
+<!--<script>-->
+<!--    window.FPConfig = {-->
+<!--        delay: 0,    // 浏览器空闲多少秒后开始预加载-->
+<!--        ignoreKeywords: [],    // 不进行预加载的链接，例 ["#", "/about"]-->
+<!--        maxRPS: 3,    // 每秒最大加载数-->
+<!--        hoverDelay: 50    // 鼠标悬浮后预加的延迟，毫秒单位-->
+<!--    };-->
+<!--</script>-->
+<!--<script defer src="../public/static/flying-pages.min.js"></script>-->
+<script src="../public/static/instantpage-5.2.0.js" type="module" integrity="sha384-jnZyxPjiipYXnSU0ygqeac2q7CVYMbh84q0uHVRRxEtvFPiQYbXWUorga2aqZJ0z"></script>
 </body>
 </html>
