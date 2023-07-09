@@ -131,6 +131,7 @@ input:focus{outline:none;}
     margin-right: 20px;
     width: 40%;
     max-width: 120px;
+    max-height: 180px;
     vertical-align: middle;
     border-radius: 5px;
 }
