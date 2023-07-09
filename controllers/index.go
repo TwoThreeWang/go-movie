@@ -135,11 +135,9 @@ func saveDb(datas []zyw.ZyMovie) {
 	for _, movie := range datas {
 		movie.UpdatedAt = time.Now()
 		movies = repositories.Movies(movie)
-		fmt.Println("保存数据库的数据：")
-		fmt.Println(movies)
-		res := db.First(&movies)
+		var mov repositories.Movies
+		res := db.Where("source = ? AND vod_id = ?", movies.Source, movies.VodId).First(&mov)
 		if errors.Is(res.Error, gorm.ErrRecordNotFound) {
-			fmt.Println("新建")
 			// 如果没有找到记录，则创建一条新的记录
 			res = db.Create(&movies)
 			if res.Error != nil {
@@ -148,7 +146,6 @@ func saveDb(datas []zyw.ZyMovie) {
 		} else if res.Error != nil {
 			easylog.Log.Error(res.Error)
 		} else {
-			fmt.Println("更新")
 			// 如果找到了记录，则更新该记录
 			res = db.Save(&movies)
 			if res.Error != nil {
@@ -254,8 +251,9 @@ func UpdataMovieInfo(source string, VodId string) {
 		data.Source = source
 		datas = append(datas, data)
 	}
-	fmt.Println(datas)
 	saveDb(datas)
+	cacheKey := source + VodId
+	easycache.C.Delete(cacheKey)
 }
 
 // SearchHistory 最近搜索关键词

@@ -20,8 +20,4 @@ sites:
       key: 快车资源
       playurl: ""
       spiderkey: zyw
-    - baseurl: https://cj.lziapi.com/api.php
-      key: 量子资源
-      playurl: ""
-      spiderkey: zyw
 spider_timeout: 10
