@@ -181,6 +181,10 @@ input:focus{outline:none;}
     word-break: break-all;
     word-wrap: normal;
     width: 100%;
+    margin: 1px 0;
+}
+.index-hot-item .cast-list .source_tag{
+    font-weight: 600;
 }
 .detail {
     display: grid;
