@@ -68,6 +68,7 @@
                     }else{
                         this.search_load = false;
                     }
+                    clearInterval(this.timer);
                 })
                 .catch(error => {
                     console.log(error);
