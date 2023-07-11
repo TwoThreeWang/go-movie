@@ -157,8 +157,10 @@
                         document.title = this.movie['VodName'] +" "+ this.play_name+" 视频在线播放 - 膨胀电影";
                         this.search_load = false;
                         this.get_history();
-                        this.add_history();
                         this.more_movie(this.movie['VodName']);
+                        setTimeout(function() {
+                            this.add_history();
+                        }, 1000*60);
                     }
                 })
                 .catch(error => {
@@ -171,8 +173,5 @@
             })
         }
     }).mount('#app')
-    function toggleShow() {
-        app.search_load = !app.search_load;
-    }
 </script>
 {{ end }}
