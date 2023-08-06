@@ -7,6 +7,7 @@ import (
 	"github.com/spf13/viper"
 	"movie/routers"
 	"movie/utils/easylog"
+	"net/http"
 )
 
 func configInit() bool {
@@ -33,6 +34,13 @@ func main() {
 		r.Use(gzip.Gzip(gzip.DefaultCompression))
 		// 指定静态资源目录
 		r.Static("/public", "./templates/public")
+		// 加载404错误页面
+		r.NoRoute(func(c *gin.Context) {
+			// 实现内部重定向
+			c.HTML(http.StatusOK, "404.html", gin.H{
+				"title": "404",
+			})
+		})
 		//r.LoadHTMLGlob("templates/*/*.tmpl")
 		routers.RegisterIndexRoutes(r)
 		routers.RegisterAdminRoutes(r)

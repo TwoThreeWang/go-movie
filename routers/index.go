@@ -46,6 +46,11 @@ func RegisterIndexRoutes(r *gin.Engine) {
 		// 豆瓣图片代理
 		web.GET("/doubanimg", controllers.DoubanImg)
 	}
+	// 加载404错误页面
+	r.NoRoute(func(c *gin.Context) {
+		// 实现内部重定向
+		c.HTML(200, "404", nil)
+	})
 }
 
 func createMyRender() multitemplate.Renderer {
@@ -58,5 +63,7 @@ func createMyRender() multitemplate.Renderer {
 		"templates/web/footer.tmpl", "templates/web/detail.tmpl")
 	r.AddFromFiles("play", "templates/web/base.tmpl", "templates/web/header.tmpl",
 		"templates/web/footer.tmpl", "templates/web/play.tmpl")
+	r.AddFromFiles("404", "templates/web/base.tmpl", "templates/web/header.tmpl",
+		"templates/web/footer.tmpl", "templates/web/404.tmpl")
 	return r
 }
