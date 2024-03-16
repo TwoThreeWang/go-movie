@@ -1,11 +1,7 @@
-search_history: 消防厅旁警察厅第二季,消防厅旁警察厅 第二季,命案,命案2023,请回答1988,五十公里桃花坞3,无名女孩,羊毛战记,羊毛战记第一季,孤注一掷
+search_history: 夜幕救援,后宫·甄嬛传,吞噬星空,华丽的外出,名侦探柯南：黑铁的鱼影,3D肉蒲团之极乐宝鉴,燃冬,鹊刀门传奇,豆瓣高分国剧！白敬亭一人分饰二角，演技炸裂！明星大侦探衍生剧，目标人物。,美猴王
 sites:
     - baseurl: https://sdzyapi.com/api.php
       key: 闪电资源
-      playurl: ""
-      spiderkey: zyw
-    - baseurl: https://api.xinlangapi.com/xinlangapi.php
-      key: 新浪资源
       playurl: ""
       spiderkey: zyw
     - baseurl: https://api.guangsuapi.com/api.php
@@ -24,12 +20,16 @@ sites:
       key: 量子资源
       playurl: ""
       spiderkey: zyw
-    - baseurl: https://bfzyapi.com/api.php
-      key: 暴风资源
+    - baseurl: https://api.tiankongapi.com/api.php
+      key: 天空资源
       playurl: ""
       spiderkey: zyw
-    - baseurl: https://suoniapi.com/api.php
-      key: 索尼资源
+    - baseurl: https://www.feisuzyapi.com/api.php
+      key: 飞速资源
+      playurl: ""
+      spiderkey: zyw
+    - baseurl: https://cj.ffzyapi.com/api.php
+      key: 非凡资源
       playurl: ""
       spiderkey: zyw
 spider_timeout: 10
