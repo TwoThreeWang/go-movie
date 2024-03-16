@@ -52,5 +52,5 @@ services: 存放服务层代码，封装业务逻辑并调用数据访问对象�
 mac下打包成linux可执行文件命令：
 
 ```
-CGO_ENABLED=0 GOOS=linux GOARCH=amd64 go build go_movie main.go
+CGO_ENABLED=0 GOOS=linux GOARCH=amd64 go build -o go_movie main.go
 ```
