@@ -65,6 +65,7 @@ img, iframe{
     margin: 0 auto;
     text-align: center;
     background-color: #f6f7f9;
+    background-image: url("../static/img/header.webp");
 }
 
 .index-header-search{
@@ -216,6 +217,9 @@ input:focus{outline:none;}
     margin: auto;
     grid-column: 2 / 3;
     grid-row: 1 / 2;
+    padding: 10px 20px;
+    border-radius: 10px;
+    background-color: #fff;
 }
 
 .detail .poster {
@@ -282,7 +286,7 @@ input:focus{outline:none;}
     box-shadow:  5px 5px 5px #c5c6c7,
     -5px -5px 5px #ffffff;
 }
-.notice{font-weight: 800;color: #444;background-color:#e4e4e49e;font-size: small;padding:5px;display: inherit;line-height: 25px;border-radius: 3px;margin-bottom: 10px;}
+.notice{font-weight: 800;color: #444;background-color:#dadada;font-size: small;padding:5px;display: inherit;line-height: 25px;border-radius: 3px;margin-bottom: 10px;}
 .notice .title{background-color: red;font-size: small;color: #fff;padding:5px;border-radius: 3px}
 .jump-play{
     text-align: center;
@@ -300,13 +304,13 @@ input:focus{outline:none;}
     grid-template-columns: 0fr !important;
 }
 .play .item{
-    width: 100%;
+    width: -webkit-fill-available;
     grid-column: 2 !important;
 }
 .play-box{
     border-radius: 3px;
-    box-shadow:  9px 9px 8px #7d7e7f,
-    -9px -9px 8px #ffffff;
+    box-shadow:  9px 9px 8px #7d7e7f, -2px -3px 20px 0px #ffffff;
+    background-color: #000;
 }
 .footerpage{
     width: 100%;
@@ -414,5 +418,154 @@ input:focus{outline:none;}
     }
     100% {
         opacity: 1;
+    }
+}
+
+.hearder-text{
+    color: #fff;
+    font-size: xxx-large;
+    font-weight: 900;
+    text-transform: uppercase;
+    letter-spacing: 5px;
+    text-align: center;
+    margin-bottom: 30px;
+    position: relative;
+}
+.hearder-text::before,
+.hearder-text::after{
+    content: "膨胀电影";
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+}
+.hearder-text::before{
+    left: -3px;
+    text-shadow: -2px 0 #00ffff;
+    /* 执行动画:动画名 时长 线性的 无限次播放 反向播放 */
+    animation: fault1 1.5s linear infinite reverse;
+}
+.hearder-text::after{
+    left: -3px;
+    text-shadow: -2px 0 #ff0050;
+    animation: fault2 1.5s linear infinite reverse;
+}
+/* 故障动画1 */
+@keyframes fault1 {
+    0%{
+        /* --t,--b为自定义属性,通过var函数对其调用 */
+        /* 这两个数值是随机生成的,可以自己进行设定,数值不一样,抖动的效果也会不一样 */
+        --t:132px;
+        --b:101px;
+        /* 剪裁一个矩形(top,right,bottom,left) 和margin是一样的 */
+        clip: rect(var(--t),100vw,var(--b),0px);
+    }
+    10%{
+        --t:40px;
+        --b:66px;
+        clip: rect(var(--t),100vw,var(--b),0px);
+    }
+    20%{
+        --t:137px;
+        --b:61px;
+        clip: rect(var(--t),100vw,var(--b),0px);
+    }
+    30%{
+        --t:133px;
+        --b:74px;
+        clip: rect(var(--t),100vw,var(--b),0px);
+    }
+    40%{
+        --t:59px;
+        --b:130px;
+        clip: rect(var(--t),100vw,var(--b),0px);
+    }
+    50%{
+        --t:22px;
+        --b:67px;
+        clip: rect(var(--t),100vw,var(--b),0px);
+    }
+    60%{
+        --t:10px;
+        --b:105px;
+        clip: rect(var(--t),100vw,var(--b),0px);
+    }
+    70%{
+        --t:105px;
+        --b:13px;
+        clip: rect(var(--t),100vw,var(--b),0px);
+    }
+    80%{
+        --t:66px;
+        --b:39px;
+        clip: rect(var(--t),100vw,var(--b),0px);
+    }
+    90%{
+        --t:36px;
+        --b:128px;
+        clip: rect(var(--t),100vw,var(--b),0px);
+    }
+    100%{
+        --t:14px;
+        --b:100px;
+        clip: rect(var(--t),100vw,var(--b),0px);
+    }
+}
+/* 故障动画2 */
+@keyframes fault2 {
+    0%{
+        --t:129px;
+        --b:36px;
+        clip: rect(var(--t),100vw,var(--b),0px);
+    }
+    10%{
+        --t:85px;
+        --b:66px;
+        clip: rect(var(--t),100vw,var(--b),0px);
+    }
+    20%{
+        --t:148px;
+        --b:138px;
+        clip: rect(var(--t),100vw,var(--b),0px);
+    }
+    30%{
+        --t:69px;
+        --b:54px;
+        clip: rect(var(--t),100vw,var(--b),0px);
+    }
+    40%{
+        --t:146px;
+        --b:34px;
+        clip: rect(var(--t),100vw,var(--b),0px);
+    }
+    50%{
+        --t:102px;
+        --b:80px;
+        clip: rect(var(--t),100vw,var(--b),0px);
+    }
+    60%{
+        --t:106px;
+        --b:99px;
+        clip: rect(var(--t),100vw,var(--b),0px);
+    }
+    70%{
+        --t:20px;
+        --b:78px;
+        clip: rect(var(--t),100vw,var(--b),0px);
+    }
+    80%{
+        --t:78px;
+        --b:52px;
+        clip: rect(var(--t),100vw,var(--b),0px);
+    }
+    90%{
+        --t:67px;
+        --b:70px;
+        clip: rect(var(--t),100vw,var(--b),0px);
+    }
+    100%{
+        --t:83px;
+        --b:40px;
+        clip: rect(var(--t),100vw,var(--b),0px);
     }
 }

@@ -43,6 +43,10 @@ func RegisterIndexRoutes(r *gin.Engine) {
 				"play":   c.Query("play"),
 			})
 		})
+		// 关于页
+		web.GET("/about", func(c *gin.Context) {
+			c.HTML(200, "about", gin.H{})
+		})
 		// 豆瓣图片代理
 		web.GET("/doubanimg", controllers.DoubanImg)
 	}
@@ -63,6 +67,8 @@ func createMyRender() multitemplate.Renderer {
 		"templates/web/footer.tmpl", "templates/web/detail.tmpl")
 	r.AddFromFiles("play", "templates/web/base.tmpl", "templates/web/header.tmpl",
 		"templates/web/footer.tmpl", "templates/web/play.tmpl")
+	r.AddFromFiles("about", "templates/web/base.tmpl", "templates/web/header.tmpl",
+		"templates/web/footer.tmpl", "templates/web/about.tmpl")
 	r.AddFromFiles("404", "templates/web/base.tmpl", "templates/web/header.tmpl",
 		"templates/web/footer.tmpl", "templates/web/404.tmpl")
 	return r

@@ -5,6 +5,7 @@ import (
 	"errors"
 	"fmt"
 	"github.com/gin-gonic/gin"
+	strip "github.com/grokify/html-strip-tags-go"
 	"github.com/patrickmn/go-cache"
 	"github.com/spf13/viper"
 	"gorm.io/gorm"
@@ -93,6 +94,7 @@ func Search(c *gin.Context) {
 					source := res.Source
 					for _, data := range res.List {
 						data.Source = source
+						data.VodContent = strip.StripTags(data.VodContent)
 						datas = append(datas, data)
 					}
 				case <-timeoutChan:

@@ -1,0 +1,39 @@
+{{ template "base.tmpl" . }}
+
+{{ define "content" }}
+<div class="main-body" id="app">
+    <div class="index-hot">
+    <h1>► About</h1>
+        <p>膨胀电影，开发初衷用于朋友间自用，所有内容均来自互联网分享站点所提供的公开引用资源，未提供影视资源上传、存储服务。</p>
+        <p>本站不主动索引、存储任何视频资源，仅仅是一个综合查询工具，搜索会实时查询网上公开的资源站，仅提供可视化的操作界面。</p>
+        <p>侵权联系：twothreewang@gmail.com</p>
+        <br>
+        <link href="https://talk.wangtwothree.com/dist/Artalk.css" rel="stylesheet">
+        <!-- JS -->
+        <script src="https://talk.wangtwothree.com/dist/Artalk.js"></script>
+
+        <!-- Artalk -->
+        <div id="Comments"></div>
+        <script>
+            document.title = "关于本站 - 膨胀电影";
+            Artalk.init({
+                el:        '#Comments',              // 绑定元素的 Selector
+                pageKey:   '{{ .RelPermalink }}',                // 固定链接 (留空自动获取)
+                pageTitle: '{{ .Title }}',
+                server:    'https://talk.wangtwothree.com/',
+                site:      '膨胀电影',
+            })
+        </script>
+    </div>
+</div>
+<style>
+    .index-hot{
+        background-color: #fff;
+        border-radius: 10px;
+        padding:10px 20px;
+    }
+    p{
+        line-height: 40px;
+    }
+</style>
+{{ end }}

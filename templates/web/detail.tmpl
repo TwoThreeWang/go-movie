@@ -10,7 +10,7 @@
                 <p class="title">((movie.VodName))</p>
                 <p>((movie.VodEn))</p>
                 <a class="tag play_btn" href="/play?source={{.source}}&vid={{.vid}}" style="padding:5px 15px">立即播放</a>
-                <p class="tag">((movie.Source))</p><p class="tag">((movie.TypeName))</p><p class="tag">((movie.VodTag))</p><p class="tag">((movie.VodArea))</p><p class="tag">((movie.VodLang))</p><p class="tag">((movie.VodYear))</p>
+                <p class="tag" v-if="movie.Source!=''">((movie.Source))</p><p class="tag" v-if="movie.TypeName!=''">((movie.TypeName))</p><p class="tag" v-if="movie.VodTag!=''">((movie.VodTag))</p><p class="tag" v-if="movie.VodArea!=''">((movie.VodArea))</p><p class="tag" v-if="movie.VodLang">((movie.VodLang))</p><p class="tag" v-if="movie.VodYear!=''">((movie.VodYear))</p>
                 <br><br>
                 <p>又名：((movie.VodSub))</p>
                 <p>导演：((movie.VodDirector))</p>
