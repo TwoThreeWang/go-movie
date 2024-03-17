@@ -290,6 +290,9 @@ input:focus{outline:none;}
 .notice .title{background-color: red;font-size: small;color: #fff;padding:5px;border-radius: 3px}
 .jump-play{
     text-align: center;
+    background-color: #fff;
+    padding: 10px 20px;
+    border-radius: 5px;
 }
 .jump-play a{
     padding: 5px 15px;
@@ -346,6 +349,14 @@ input:focus{outline:none;}
     left: 0;
     z-index: -1;
     object-fit: cover;
+}
+.about .index-hot{
+    background-color: #fff;
+    border-radius: 10px;
+    padding:10px 20px;
+}
+.about p{
+    line-height: 40px;
 }
 @media screen and (max-width: 1199px) {
     .index-hot-item {

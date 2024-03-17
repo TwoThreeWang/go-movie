@@ -5,7 +5,7 @@
     <!--必要样式-->
     <script src="https://cdn.jsdelivr.net/npm/artplayer/dist/artplayer.js"></script>
     <div class="index-hot">
-        <div class="conn-load" v-if="search_load" id="msg">正在获取视频详情...</div>
+        <div class="conn-load" v-if="search_load" id="msg"><span class="jump-play">正在获取视频详情...</span></div>
         <div class="play-box">
         <div class="notice">
             <span class="title">警告</span><span> 不要相信视频中的任何广告，谨防上当受骗，不要相信，不要相信，不要相信！</span>
@@ -18,7 +18,7 @@
         <div class="detail play">
             <div class="item">
                 <p class="title"><a href="/detail?source={{.source}}&vid={{.vid}}">((movie.VodName))</a> <small>((play_name))在线播放</small></p>
-                <a :href="`/play?source={{.source}}&vid={{.vid}}&play=${next_play}`" class="play_btn">下一集</a><p class="tag" v-if="movie.Source!=''">((movie.Source))</p><p class="tag" v-if="movie.TypeName!=''">((movie.TypeName))</p><p class="tag" v-if="movie.VodTag!=''">((movie.VodTag))</p><p class="tag" v-if="movie.VodArea!=''">((movie.VodArea))</p><p class="tag" v-if="movie.VodLang!=''">((movie.VodLang))</p><p class="tag" v-if="movie.VodYear!=''">((movie.VodYear))</p>
+                <a :href="`/play?source={{.source}}&vid={{.vid}}&play=${next_play}`" class="play_btn" v-if="next_play!=''">下一集</a><p class="tag" v-if="movie.Source!=''">((movie.Source))</p><p class="tag" v-if="movie.TypeName!=''">((movie.TypeName))</p><p class="tag" v-if="movie.VodTag!=''">((movie.VodTag))</p><p class="tag" v-if="movie.VodArea!=''">((movie.VodArea))</p><p class="tag" v-if="movie.VodLang!=''">((movie.VodLang))</p><p class="tag" v-if="movie.VodYear!=''">((movie.VodYear))</p>
                 <br><br>
                 <p>又名：((movie.VodSub))</p>
                 <p>导演：((movie.VodDirector))</p>
@@ -167,6 +167,7 @@
                         this.more_movie(this.movie['VodName']);
                         setTimeout(function() {
                             app.add_history();
+                            app.search_load = false;
                         }, 1000*60);
                     }
                 })
