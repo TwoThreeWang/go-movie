@@ -132,6 +132,7 @@ func Search(c *gin.Context) {
 
 // 影片信息保存到数据库
 func saveDb(datas []zyw.ZyMovie) {
+	easylog.Log.Info("存入数据库：", datas)
 	db := repositories.GetDB()
 	var movies repositories.Movies
 	for _, movie := range datas {
@@ -140,6 +141,7 @@ func saveDb(datas []zyw.ZyMovie) {
 		var mov repositories.Movies
 		res := db.Where("source = ? AND vod_id = ?", movies.Source, movies.VodId).First(&mov)
 		if errors.Is(res.Error, gorm.ErrRecordNotFound) {
+			easylog.Log.Info("新建：", movie)
 			// 如果没有找到记录，则创建一条新的记录
 			res = db.Create(&movies)
 			if res.Error != nil {
@@ -148,6 +150,7 @@ func saveDb(datas []zyw.ZyMovie) {
 		} else if res.Error != nil {
 			easylog.Log.Error(res.Error)
 		} else {
+			easylog.Log.Info("更新：", movie)
 			// 如果找到了记录，则更新该记录
 			res = db.Save(&movies)
 			if res.Error != nil {
@@ -321,9 +324,11 @@ func DoubanImg(c *gin.Context) {
 
 // 增加一条搜索记录
 func addSearchHistory(kw string) {
+	easylog.Log.Info("新增搜索记录：", kw)
 	history := viper.GetString("search_history")
 	historys := strings.Split(history, ",")
 	if contains(historys, kw) {
+		easylog.Log.Info("搜索记录已存在：", kw)
 		return
 	}
 	historys = append(historys, kw)
@@ -332,6 +337,7 @@ func addSearchHistory(kw string) {
 		historys = historys[len(historys)-10:]
 	}
 	str := strings.Join(historys, ",")
+	easylog.Log.Info("最新的搜索记录：", str)
 	// 修改配置文件
 	viper.Set("search_history", str)
 	if err := viper.WriteConfig(); err != nil {
