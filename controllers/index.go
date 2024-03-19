@@ -77,11 +77,12 @@ func Search(c *gin.Context) {
 					} else {
 						// 动态调用采集函数
 						dataNew, err := f.ExternalGetReport(site, kw)
-						// 将响应结果发送到结果通道
-						resultChan <- dataNew
 						if err != nil {
 							easylog.Log.Error(err.Error())
+							return
 						}
+						// 将响应结果发送到结果通道
+						resultChan <- dataNew
 					}
 				}(ctx)
 			}
@@ -102,6 +103,9 @@ func Search(c *gin.Context) {
 					fmt.Println("timeout!!!")
 					if len(datas) > 0 {
 						easycache.C.Set(kw, datas, cache.DefaultExpiration)
+						easylog.Log.Info("开始存库和写入搜索历史")
+						go saveDb(datas) // 结果保存到数据库
+						go addSearchHistory(kw)
 					}
 					result.Ok(c, datas)
 					c.Abort()
