@@ -111,6 +111,7 @@ func Search(c *gin.Context) {
 			wg.Wait()
 			if len(datas) > 0 {
 				easycache.C.Set(kw, datas, cache.DefaultExpiration)
+				easylog.Log.Info("开始存库和写入搜索历史")
 				go saveDb(datas) // 结果保存到数据库
 				go addSearchHistory(kw)
 			}
