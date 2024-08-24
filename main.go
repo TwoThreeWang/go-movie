@@ -34,6 +34,7 @@ func main() {
 		r.Use(gzip.Gzip(gzip.DefaultCompression))
 		// 指定静态资源目录
 		r.Static("/public", "./templates/public")
+		r.StaticFile("/robots.txt", "robots.txt")
 		// 加载404错误页面
 		r.NoRoute(func(c *gin.Context) {
 			// 实现内部重定向
