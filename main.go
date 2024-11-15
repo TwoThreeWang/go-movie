@@ -12,7 +12,7 @@ import (
 
 func configInit() bool {
 	// 配置文件初始化
-	viper.SetConfigFile("configs/config.yaml")
+	viper.SetConfigFile("config.yaml")
 	err := viper.ReadInConfig()
 	if err != nil {
 		easylog.Log.Error("Error reading config file")
@@ -34,7 +34,7 @@ func main() {
 		r.Use(gzip.Gzip(gzip.DefaultCompression))
 		// 指定静态资源目录
 		r.Static("/public", "./templates/public")
-		r.StaticFile("/robots.txt", "robots.txt")
+		r.StaticFile("/robots.txt", "public/robots.txt")
 		// 加载404错误页面
 		r.NoRoute(func(c *gin.Context) {
 			// 实现内部重定向

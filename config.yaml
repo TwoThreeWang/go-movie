@@ -1,0 +1,36 @@
+search_history: 朱同在三年级丢失了超能力,流浪地球,流浪地球(特别版),不可撤销,豺狼的日子,豺狼的日子2024,贴身保镖,贴身保镖第一季,逃兵追缉令,D.P：逃兵追缉令
+sites:
+  - baseurl: https://sdzyapi.com/api.php
+    key: 闪电资源
+    playurl: ""
+    spiderkey: zyw
+  - baseurl: https://collect.wolongzy.cc/api.php
+    key: 卧龙资源
+    playurl: ""
+    spiderkey: zyw
+  - baseurl: https://caiji.kczyapi.com/api.php
+    key: 快车资源
+    playurl: ""
+    spiderkey: zyw
+  - baseurl: https://cj.lziapi.com/api.php
+    key: 量子资源
+    playurl: ""
+    spiderkey: zyw
+  - baseurl: https://api.tiankongapi.com/api.php
+    key: 天空资源
+    playurl: ""
+    spiderkey: zyw
+  - baseurl: https://www.feisuzyapi.com/api.php
+    key: 飞速资源
+    playurl: ""
+    spiderkey: zyw
+  - baseurl: https://cj.ffzyapi.com/api.php
+    key: 非凡资源
+    playurl: ""
+    spiderkey: zyw
+  - baseurl: https://api.xinlangapi.com/xinlangapi.php
+    key: 新浪资源
+    playurl: ""
+    spiderkey: zywweb
+    weburl: https://xinlangziyuan.com/index.php/vod/search.html
+spider_timeout: 10
