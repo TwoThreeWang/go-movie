@@ -91,7 +91,6 @@ Temporary Items
 /.idea/vcs.xml
 /.idea/modules.xml
 /pkg/mod/cache/lock
-/go.sum
 /.idea
 .mod
 sqlite.db

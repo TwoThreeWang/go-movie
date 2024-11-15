@@ -1,6 +1,6 @@
 #!/bin/bash
 echo '开始拉取最新代码'
-git pull origin main
+git pull origin master
 echo '打包镜像'
 docker build -t go-movie:latest .
 echo '停止并删除旧容器'
