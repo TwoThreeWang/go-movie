@@ -14,10 +14,10 @@ import (
 	"strings"
 )
 
-type WebZyw struct{}
+type XlZyw struct{}
 
 // ExternalGetReport 主动查询三方结果
-func (zyw *WebZyw) ExternalGetReport(site configs.SpiderSites, kw string) (movie ZySearchResult, err error) {
+func (zyw *XlZyw) ExternalGetReport(site configs.SpiderSites, kw string) (movie ZySearchResult, err error) {
 	url := site.WebUrl + "?wd=" + url.QueryEscape(kw)
 	client := &http.Client{}
 	req, err := http.NewRequest("GET", url, nil)
@@ -37,7 +37,6 @@ func (zyw *WebZyw) ExternalGetReport(site configs.SpiderSites, kw string) (movie
 		easylog.Log.Error(err)
 		return
 	}
-	fmt.Println(string(body))
 	doc, err := htmlquery.Parse(strings.NewReader(string(body)))
 	if err != nil {
 		easylog.Log.Error(err)
@@ -67,7 +66,7 @@ func (zyw *WebZyw) ExternalGetReport(site configs.SpiderSites, kw string) (movie
 }
 
 // ExternalGetById 根据影片ID查询三方数据
-func (zyw *WebZyw) ExternalGetById(site configs.SpiderSites, vid string) (movie ZyDetailResult, err error) {
+func (zyw *XlZyw) ExternalGetById(site configs.SpiderSites, vid string) (movie ZyDetailResult, err error) {
 	url := site.BaseUrl + "/provide/vod/?ac=detail&ids=" + vid
 	param := map[string]interface{}{}
 	header := map[string]string{

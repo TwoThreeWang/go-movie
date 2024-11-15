@@ -31,6 +31,6 @@ sites:
   - baseurl: https://api.xinlangapi.com/xinlangapi.php
     key: 新浪资源
     playurl: ""
-    spiderkey: zywweb
+    spiderkey: xlzyw
     weburl: https://xinlangziyuan.com/index.php/vod/search.html
 spider_timeout: 10

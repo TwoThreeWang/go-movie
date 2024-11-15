@@ -9,6 +9,7 @@ RUN go mod download
 COPY . .
 COPY templates /app/templates
 COPY public /app/public
+COPY data /app/data
 RUN go mod tidy
 RUN go build -p 10 -ldflags="-s -w" -o /app/main main.go
 

@@ -13,8 +13,8 @@ type Spider interface {
 
 // ExternalApi 外部接口回调数据处理函数映射表
 var ExternalApi = map[string]ExternalSpider{
-	"zyw":    &zyw.ZYW{},
-	"zywweb": &zyw.WebZyw{},
+	"zyw":   &zyw.ZYW{},
+	"xlzyw": &zyw.XlZyw{},
 }
 
 // ExternalSpider todo 外部数据调用接口，接口统一需实现的方法如下
