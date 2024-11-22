@@ -33,4 +33,4 @@ sites:
     playurl: ""
     spiderkey: xlzyw
     weburl: https://xinlangziyuan.com/index.php/vod/search.html
-spider_timeout: 10
+spider_timeout: 20
