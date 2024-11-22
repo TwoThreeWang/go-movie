@@ -12,6 +12,7 @@ require (
 	github.com/gin-gonic/gin v1.9.1
 	github.com/glebarez/sqlite v1.8.0
 	github.com/grokify/html-strip-tags-go v0.1.0
+	github.com/kaptinlin/jsonrepair v0.1.0
 	github.com/natefinch/lumberjack v2.0.0+incompatible
 	github.com/patrickmn/go-cache v2.1.0+incompatible
 	github.com/spf13/viper v1.16.0

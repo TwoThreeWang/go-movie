@@ -21,12 +21,17 @@ sites:
     key: 华为吧资源
     playurl: ""
     spiderkey: zyw
-  - baseurl: https://cj.lziapi.com/api.php
-    key: 量子资源
+  - baseurl: https://api.wujinapi.me/api.php
+    key: 无尽资源
     playurl: ""
     spiderkey: zyw
-  - baseurl: https://cj.rycjapi.com/api.php
-    key: 如意资源
+  - baseurl: https://api.ukuapi.com/api.php/
+    key: U酷资源
     playurl: ""
     spiderkey: zyw
-spider_timeout: 20
+  - baseurl: https://api.guangsuapi.com/api.php
+    key: 光速资源
+    playurl: ""
+    spiderkey: gszyw
+    weburl: https://guangsuzy.com/index.php/vod/search.html
+spider_timeout: 15

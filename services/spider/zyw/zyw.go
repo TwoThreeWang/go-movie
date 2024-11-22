@@ -3,6 +3,7 @@ package zyw
 import (
 	"encoding/json"
 	"fmt"
+	"github.com/kaptinlin/jsonrepair"
 	"movie/configs"
 	"movie/utils/easyhttp"
 	"movie/utils/easylog"
@@ -27,9 +28,13 @@ func (zy *ZYW) ExternalGetReport(site configs.SpiderSites, kw string) (movie ZyS
 	// 解析JSON响应
 	err = json.Unmarshal(jsonStr, &movie)
 	if err != nil {
-		fmt.Println(url + " 错误结果 " + string(jsonStr))
-		easylog.Log.Error(err)
-		return
+		jsonStrRep, _ := jsonrepair.JSONRepair(string(jsonStr))
+		err = json.Unmarshal([]byte(jsonStrRep), &movie)
+		if err != nil {
+			fmt.Println(url + " 错误结果 " + jsonStrRep)
+			easylog.Log.Error(err)
+			return
+		}
 	}
 	movie.Source = site.Key
 	return

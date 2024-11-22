@@ -15,6 +15,7 @@ type Spider interface {
 var ExternalApi = map[string]ExternalSpider{
 	"zyw":   &zyw.ZYW{},
 	"xlzyw": &zyw.XlZyw{},
+	"gszyw": &zyw.GSZyw{},
 }
 
 // ExternalSpider todo 外部数据调用接口，接口统一需实现的方法如下
