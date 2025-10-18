@@ -1,0 +1,25 @@
+version: '3'
+services:
+  go-movie:
+    container_name: go-movie
+    image: go-movie:latest
+    ports:
+      - "5005:5005"
+    volumes:
+      - ./config.yaml:/config.yaml
+      - ./templates:/templates
+      - ./public:/public
+      - ./data:/data
+      - ./docs:/docs
+      - ./log:/log
+    restart: always
+    logging:
+      driver: "json-file"
+      options:
+        max-size: "10m"
+    networks:
+      - docker-app-network
+
+networks:
+  docker-app-network:
+    external: true
