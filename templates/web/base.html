@@ -16,7 +16,7 @@
     <meta property="og:description"
         content="Moovie 是一个全网影视聚合搜索网站，支持一键搜索各大资源平台的电影、电视剧和综艺节目，让你轻松找到想看的影片。首页实时更新豆瓣热门影视榜单，无需注册，即搜即看。">
     <meta property="og:url" content="https://moovie.c2v2.com">
-   {{ end }}
+    {{ end }}
     <meta name="author" content="Moovie">
     <meta name="robots" content="index, follow">
     <link rel="stylesheet" href="../public/static/style.css">
@@ -49,6 +49,7 @@
     {{ end }}
     </script>
     <link rel="dns-prefetch" href="https://cdnjs.cloudflare.com">
+    <script async defer src="https://pingoo.c2v2.com/pingoo.js" site-id="4"></script>
 </head>
 
 <body>
@@ -111,6 +112,30 @@
         </nav>
         <main>
             {{block "content" . }}{{end}}
+            <div id="install-tip" style="
+                display:none;
+                position:fixed;
+                bottom:0;
+                left:0;
+                right:0;
+                background:rgba(0,0,0,0.85);
+                color:#fff;
+                font-size:14px;
+                padding:10px 14px;
+                text-align:center;
+                z-index:9999;
+            ">
+                📱 添加到主屏幕，获得更接近App的访问体验
+                <span id="close-tip" style="
+                margin-left:10px;
+                background:#fff;
+                color:#000;
+                padding:2px 8px;
+                border-radius:6px;
+                font-weight:bold;
+                cursor:pointer;
+                ">关闭</span>
+            </div>
             <footer class="dot-bg">本站所有内容均来自互联网分享站点所提供的公开引用资源，未提供影视资源上传、存储服务。侵权联系：twothreewang@gmail.com</footer>
         </main>
     </div>
@@ -120,6 +145,25 @@
         function toggle() { n.classList.toggle('show'); k.classList.toggle('show') }
         m.onclick = toggle;
         k.onclick = toggle;
+
+        (function () {
+            // 检测是否为手机端
+            var isMobile = /iphone|ipad|ipod|android|mobile/i.test(navigator.userAgent);
+            // 检测是否已在桌面模式 (iOS Safari PWA 模式)
+            var isStandalone = window.matchMedia('(display-mode: standalone)').matches || window.navigator.standalone;
+
+            // 已关闭提示的不再显示
+            if (!isMobile || isStandalone || localStorage.getItem('hideInstallTip')) return;
+
+            var tip = document.getElementById('install-tip');
+            tip.style.display = 'block';
+
+            // 关闭按钮逻辑
+            document.getElementById('close-tip').addEventListener('click', function () {
+                tip.style.display = 'none';
+                localStorage.setItem('hideInstallTip', '1');
+            });
+        })();
     </script>
 </body>
 
