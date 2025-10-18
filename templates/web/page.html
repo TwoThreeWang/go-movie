@@ -1,0 +1,129 @@
+{{ template "base.html" . }}
+{{ define "title" }}
+<title>{{.title}} - Moovie 全网影视聚合平台</title>
+<meta name="description" content="Moovie 聚合全网影视资源，为你提供高清播放、多源切换与智能续播功能。发现更多精彩电影，就在 Moovie。">
+<meta name="keywords" content="Moovie, 影视播放, 全网影视聚合, 在线看电影, 免费追剧">
+{{end}}
+
+{{ define "content" }}
+<style>
+    .article-container {
+        padding: 2rem;
+    }
+    article h1 {
+        font-size: 2rem;
+        color: var(--bg-primary-text);
+        margin: 2rem 0 1.5rem;
+        line-height: 1.4;
+    }
+    article h2 {
+        font-size: 1.5rem;
+        color: var(--primary-color);
+        margin: 2.5rem 0 1.5rem;
+        position: relative;
+    }
+    article h2::before {
+        content: '#';
+        color: var(--primary-color);
+        opacity: 0.5;
+        margin-right: 0.5rem;
+        font-weight: normal;
+    }
+    article p {
+        margin-bottom: 1.2rem;
+        line-height: 1.8;
+        color: var(--bg-primary-text);
+        font-size: 1.1rem;
+    }
+    article ul,
+    article ol {
+        margin: 1.5rem 0;
+        padding-left: 1.2rem;
+    }
+    article li {
+        margin-bottom: 0.8rem;
+        line-height: 1.6;
+        font-size: 1.1rem;
+    }
+    article img {
+        max-width: 100%;
+        height: auto;
+        border-radius: 12px;
+        margin: 2rem auto;
+        display: block;
+        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+    }
+    article blockquote {
+        border-left: 4px solid var(--primary-color);
+        padding: 1rem 1.5rem;
+        margin: 2rem 0;
+        background: var(--bg-primary);
+        border-radius: 0 8px 8px 0;
+        color: var(--secondary-text-one);
+        font-style: italic;
+    }
+    article blockquote p {
+        margin: 0;
+        line-height: 1.6;
+    }
+    article code {
+        background: var(--border-color);
+        padding: 0.2rem 0.4rem;
+        border-radius: 4px;
+        font-size: 0.9em;
+        color: var(--primary-color);
+    }
+    article pre {
+        background: var(--bg-primary-text);
+        color: var(--primary-text);
+        padding: 1.5rem;
+        border-radius: 8px;
+        overflow-x: auto;
+        margin: 1.5rem 0;
+        font-size: 0.95rem;
+        line-height: 1.6;
+    }
+    article pre code {
+        background: none;
+        padding: 0;
+        color: inherit;
+        font-size: inherit;
+    }
+    article hr {
+        border: none;
+        height: 1px;
+        background: var(--border-color);
+        margin: 2rem 0;
+        position: relative;
+    }
+    article strong {
+        color: var(--primary-color);
+        font-weight: 600;
+    }
+    article em {
+        font-style: italic;
+        color: var(--secondary-text-one);
+    }
+    @media (max-width: 768px) {
+        .article-container {
+            padding: 0;
+        }
+        article h1 {
+            font-size: 1.8rem;
+        }
+        article h2 {
+            font-size: 1.4rem;
+        }
+        article p,
+        article li {
+            font-size: 1rem;
+        }
+    }
+</style>
+<div class="breadcrumb">
+    <a href="/">首页</a>
+    <span>/</span>
+    <span>关于我们</span>
+</div>
+<article class="article-container">{{.content}}</article>
+{{end}}

@@ -1,37 +1,81 @@
-search_history: 朱同在三年级丢失了超能力,流浪地球,流浪地球(特别版),不可撤销,豺狼的日子,豺狼的日子2024,贴身保镖,贴身保镖第一季,逃兵追缉令,D.P：逃兵追缉令
+search_history: 豺狼的日子,豺狼的日子2024,贴身保镖,贴身保镖第一季,逃兵追缉令,D.P：逃兵追缉令,流浪地球2,长安的荔枝,好狗狗,嫌疑人之不可撤销
 sites:
-  - baseurl: https://collect.wolongzy.cc/api.php
-    key: 卧龙资源
-    playurl: ""
-    spiderkey: zyw
-  - baseurl: https://api.tiankongapi.com/api.php
-    key: 天空资源
-    playurl: ""
-    spiderkey: zyw
-  - baseurl: https://api.xinlangapi.com/xinlangapi.php
-    key: 新浪资源
-    playurl: ""
-    spiderkey: xlzyw
-    weburl: https://xinlangziyuan.com/index.php/vod/search.html
-  - baseurl: https://cj.ffzyapi.com/api.php
-    key: 非凡资源
-    playurl: ""
-    spiderkey: zyw
-  - baseurl: https://cjhwba.com/api.php
-    key: 华为吧资源
-    playurl: ""
-    spiderkey: zyw
-  - baseurl: https://api.wujinapi.me/api.php
-    key: 无尽资源
-    playurl: ""
-    spiderkey: zyw
-  - baseurl: https://api.ukuapi.com/api.php/
-    key: U酷资源
-    playurl: ""
-    spiderkey: zyw
-  - baseurl: https://api.guangsuapi.com/api.php
-    key: 光速资源
-    playurl: ""
-    spiderkey: gszyw
-    weburl: https://guangsuzy.com/index.php/vod/search.html
-spider_timeout: 15
+    - baseurl: https://collect.wolongzy.cc/api.php
+      key: 卧龙资源
+      playurl: ""
+      spiderkey: zyw
+    - baseurl: https://api.wujinapi.me/api.php
+      key: 无尽资源
+      playurl: ""
+      spiderkey: zyw
+    - baseurl: https://api.ukuapi.com/api.php
+      key: U酷资源
+      playurl: ""
+      spiderkey: zyw
+    - baseurl: https://cj.rycjapi.com/api.php
+      key: 如意资源
+      playurl: ""
+      spiderkey: zyw
+    - baseurl: https://tyyszy.com/api.php
+      key: 天涯资源
+      playurl: ""
+      spiderkey: zyw
+    - baseurl: https://360zy.com/api.php
+      key: 360资源
+      playurl: ""
+      spiderkey: zyw
+    - baseurl: https://jszyapi.com/api.php
+      key: 极速资源
+      playurl: ""
+      spiderkey: zyw
+    - baseurl: https://dbzy.tv/api.php
+      key: 豆瓣资源
+      playurl: ""
+      spiderkey: zyw
+    - baseurl: https://mozhuazy.com/api.php
+      key: 魔爪资源
+      playurl: ""
+      spiderkey: zyw
+    - baseurl: https://www.mdzyapi.com/api.php
+      key: 魔都资源
+      playurl: ""
+      spiderkey: zyw
+    - baseurl: https://api.zuidapi.com/api.php
+      key: 最大资源
+      playurl: ""
+      spiderkey: zyw
+    - baseurl: https://wwzy.tv/api.php
+      key: 旺旺短剧
+      playurl: ""
+      spiderkey: zyw
+    - baseurl: https://ckzy.me/api.php
+      key: CK资源
+      playurl: ""
+      spiderkey: zyw
+    - baseurl: http://zuidazy.me/api.php
+      key: 最大资源
+      playurl: ""
+      spiderkey: zyw
+    - baseurl: https://api.apibdzy.com/api.php
+      key: 百度云资源
+      playurl: ""
+      spiderkey: zyw
+    - baseurl: https://www.hongniuzy2.com/api.php
+      key: 红牛资源
+      playurl: ""
+      spiderkey: zyw
+    - baseurl: https://caiji.maotaizy.cc/api.php
+      key: 茅台资源
+      playurl: ""
+      spiderkey: zyw
+    - baseurl: https://api.xinlangapi.com/xinlangapi.php
+      key: 新浪资源
+      playurl: ""
+      spiderkey: xlzyw
+      weburl: https://xinlangziyuan.com/index.php/vod/search.html
+    - baseurl: https://api.guangsuapi.com/api.php
+      key: 光速资源
+      playurl: ""
+      spiderkey: gszyw
+      weburl: https://guangsuzy.com/index.php/vod/search.html
+spider_timeout: 10

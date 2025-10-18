@@ -14,6 +14,10 @@ func DoubanHot(movie_type string) (data ResultDoubanHot, err error) {
 		url = "https://movie.douban.com/j/search_subjects?type=movie&tag=热门&page_limit=50&page_start=0"
 	} else if movie_type == "tv" {
 		url = "https://movie.douban.com/j/search_subjects?type=tv&tag=热门&page_limit=50&page_start=0"
+	} else if movie_type == "show" {
+		url = "https://movie.douban.com/j/search_subjects?type=tv&tag=综艺&page_limit=50&page_start=0"
+	} else if movie_type == "cartoon" {
+		url = "https://movie.douban.com/j/search_subjects?type=tv&tag=日本动画&page_limit=50&page_start=0"
 	} else {
 		err = errors.New("参数错误")
 		return

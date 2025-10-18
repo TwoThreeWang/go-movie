@@ -1,0 +1,126 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="Cache-Control" content="max-age=7200" />
+    {{ block "title" . }}
+    <title>Moovie - 发现你的下一部电影，让找片这件小事，变得简单一点。</title>
+    <meta name="description"
+        content="Moovie 是一个全网影视聚合搜索网站，支持一键搜索各大资源平台的电影、电视剧和综艺节目，让你轻松找到想看的影片。首页实时更新豆瓣热门影视榜单，无需注册，即搜即看。">
+    <meta name="keywords" content="Moovie, 影视搜索, 电影搜索, 电视剧搜索, 在线看电影, 聚合搜索, 全网视频, 豆瓣热门, 热门电影, 免费影视资源">
+    <link rel="canonical" href="https://moovie.c2v2.com/" />
+    <meta property="og:type" content="website">
+    <meta property="og:title" content="Moovie - 一键搜索全网影视">
+    <meta property="og:description"
+        content="Moovie 是一个全网影视聚合搜索网站，支持一键搜索各大资源平台的电影、电视剧和综艺节目，让你轻松找到想看的影片。首页实时更新豆瓣热门影视榜单，无需注册，即搜即看。">
+    <meta property="og:url" content="https://moovie.c2v2.com">
+   {{ end }}
+    <meta name="author" content="Moovie">
+    <meta name="robots" content="index, follow">
+    <link rel="stylesheet" href="../public/static/style.css">
+    <link rel="icon"
+        href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>🐮</text></svg>">
+    <meta name="theme-color" content="#f60c3e">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+    <meta name="apple-mobile-web-app-title" content="Moovie">
+    <link rel="apple-touch-icon" href="../public/static/img/moovie-app.png">
+    <link rel="manifest" href="/public/manifest.json">
+    <script src="../public/static/base.js"></script>
+
+    <!-- Structured Data -->
+    <script type="application/ld+json">
+    {{ block "schema" . }}
+    {
+    "@context": "https://schema.org",
+    "@type": "WebSite",
+    "name": "Moovie",
+    "url": "https://moovie.c2v2.com",
+    "description": "Moovie 是一个全网影视聚合搜索网站，支持一键搜索电影、电视剧、综艺等视频内容。",
+    "potentialAction": {
+        "@type": "SearchAction",
+        "target": "https://moovie.c2v2.com/search?kw={search_term_string}",
+        "query-input": "required name=kw"
+    },
+    "inLanguage": "zh-CN"
+    }
+    {{ end }}
+    </script>
+    <link rel="dns-prefetch" href="https://cdnjs.cloudflare.com">
+</head>
+
+<body>
+    <div class="top">
+        <a class="logo" href="/">🐮 Moovie</a>
+        <span id="m">☰</span>
+    </div>
+    <div class="wrap">
+        <nav id="n">
+            <div class="logo"><a href="/">🐮 Moovie</a></div>
+            <div class="slogan">发现你的下一部电影</div>
+            <br>
+            <div class="nav-link">
+                <a href="/">
+                    <svg viewBox="0 0 24 24">
+                        <path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z M9 22V12h6v10" />
+                    </svg>
+                    首页
+                </a>
+                <a href="/hot/movie">
+                    <svg viewBox="0 0 24 24">
+                        <rect width="18" height="18" x="3" y="3" rx="2" />
+                        <path d="M7 3v18M3 7.5h4M3 12h18M3 16.5h4M17 3v18M17 7.5h4M17 16.5h4" />
+                    </svg>
+                    热门电影
+                </a>
+                <a href="/hot/tv">
+                    <svg viewBox="0 0 24 24">
+                        <rect x="2" y="7" width="20" height="15" rx="2" ry="2" />
+                        <polyline points="17 2 12 7 7 2" />
+                    </svg>
+                    热门剧集
+                </a>
+                <a href="/hot/show">
+                    <svg viewBox="0 0 24 24">
+                        <rect x="2" y="4" width="20" height="16" rx="2" ry="2" />
+                        <path d="M10 10l5 3-5 3v-6z" />
+                    </svg>
+                    热播综艺
+                </a>
+                <a href="/hot/cartoon">
+                    <svg viewBox="0 0 64 64">
+                        <circle cx="32" cy="32" r="30" stroke-width="4" />
+                        <circle cx="22" cy="26" r="3" />
+                        <circle cx="42" cy="26" r="3" />
+                        <path d="M22 42 C26 48, 38 48, 42 42" stroke-width="4" stroke-linecap="round" />
+                    </svg>
+                    日本动漫
+                </a>
+                <br>
+                <div class="title"><small>More</small></div>
+                <a href="/page/about">
+                    <svg viewBox="0 0 24 24">
+                        <circle cx="12" cy="12" r="10" />
+                        <path d="M12 16l4-4-4-4-4 4 4 4z" />
+                    </svg>
+                    关于本站
+                </a>
+            </div>
+        </nav>
+        <main>
+            {{block "content" . }}{{end}}
+            <footer class="dot-bg">本站所有内容均来自互联网分享站点所提供的公开引用资源，未提供影视资源上传、存储服务。侵权联系：twothreewang@gmail.com</footer>
+        </main>
+    </div>
+    <div class="mask" id="mask"></div>
+    <script>
+        const n = document.getElementById('n'), m = document.getElementById('m'), k = document.getElementById('mask');
+        function toggle() { n.classList.toggle('show'); k.classList.toggle('show') }
+        m.onclick = toggle;
+        k.onclick = toggle;
+    </script>
+</body>
+
+</html>

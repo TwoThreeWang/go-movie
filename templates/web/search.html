@@ -1,0 +1,84 @@
+{{ template "base.html" . }}
+{{ define "title" }}
+<title>{{.kw}} 全网影视搜索结果 - Moovie</title>
+<meta name="description" content="Moovie 为你聚合全网影视资源，找到与“{{.kw}}”相关的电影、电视剧、综艺节目等内容，无需注册，即点即看。">
+<meta name="keywords" content="{{.kw}}, {{.kw}}在线观看, {{.kw}}电影, {{.kw}}电视剧, 影视搜索, Moovie, 全网影视聚合, 在线看片">
+<link rel="canonical" href="https://moovie.c2v2.com/search?kw={{.kw}}">
+{{end}}
+{{ define "schema" }}
+{{end}}
+{{ define "content" }}
+<style>
+    .search-header {
+        border-bottom: 1px dotted #eee;
+        margin-bottom: 2rem;
+    }
+</style>
+<div class="breadcrumb">
+    <a href="/">首页</a>
+    <span>/</span>
+    <span>{{.kw}} 全网搜索</span>
+</div>
+<div class="search-header">
+    <form action="/search" class="search-box">
+        <input type="text" placeholder="想看就搜，看你想看..." aria-label="搜索电影" value="{{.kw}}"  name="kw">
+        <button>搜索</button>
+    </form>
+</div>
+<div id="load">
+    <span class="cow-emoji" role="img" aria-label="Cow">🐮</span>
+    <p>正在聚合搜索多个影视资源站...</p>
+</div>
+<div class="movies" id="movies"></div>
+<script>
+function getM3u8(str){
+    var list_one = item_one.split('#')
+    var list_two = list_one[1].split('$')
+    return list_two[1]
+}
+async function getSearch() {
+    const movies = document.getElementById("movies");
+    const load = document.getElementById("load");
+    try {
+        const response = await sendRequest('GET', '/api/search?kw={{.kw}}');
+
+        if (response.code !== 200) {
+            throw new Error(`HTTP error! status: ${response.msg}`);
+        }
+        const movies_data = await response.data;
+        var movies_html = '';
+        if(movies_data){
+            for (let i = 0; i < movies_data.length; i++) {
+                var item = movies_data[i];
+                movies_html += `<a href="/play?source=${item.source}&vid=${item.vod_id}&name=${item.vod_name}" class="movie-card" title="现在播放《${item.vod_name}》">
+                    <div class="movie-poster">
+                        <img loading="lazy" src="${item.vod_pic}" alt="${item.vod_name} Movie Poster" referrerPolicy="no-referrer">
+                    </div>
+                    <div class="movie-title">${item.vod_name}</div>
+                    <div class="movie-info">
+                        <span>${item.vod_year}</span>
+                        <span>${item.vod_area}｜${item.type_name}</span>
+                        <span>${item.vod_director}(导)</span>
+                        <span>${item.source}（${item.vod_remarks}）</span>
+                    </div>
+                </a>`
+            }
+        }
+        if (movies_html == ""){
+            load.innerHTML = `<span class="cow-emoji" role="img" aria-label="Cow">🤔</span><p>暂时没有搜索到影片资源，过段时间再试试呗！</p>`
+        }else{
+            load.style.display = "none";
+        }
+        movies.innerHTML = movies_html;
+    } catch (error) {
+        console.error('加载影视数据失败:', error);
+        showMsg('加载影视数据失败，重新搜索试试？', "error")
+        load.innerHTML = `<span class="cow-emoji" role="img" aria-label="Cow">🤔</span><p>暂时没有搜索到影片资源，过段时间再试试呗！</p>`
+    }
+}
+// 页面加载完成后执行
+document.addEventListener('DOMContentLoaded', function () {
+    getSearch();
+});
+</script>
+{{ end }}

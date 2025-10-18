@@ -1,9 +1,10 @@
 package routers
 
 import (
+	"movie/controllers"
+
 	"github.com/gin-contrib/multitemplate"
 	"github.com/gin-gonic/gin"
-	"movie/controllers"
 )
 
 func RegisterIndexRoutes(r *gin.Engine) {
@@ -41,35 +42,41 @@ func RegisterIndexRoutes(r *gin.Engine) {
 				"source": c.Query("source"),
 				"vid":    c.Query("vid"),
 				"play":   c.Query("play"),
+				"name":   c.Query("name"),
 			})
 		})
 		// 关于页
 		web.GET("/about", func(c *gin.Context) {
 			c.HTML(200, "about", gin.H{})
 		})
+		web.GET("/hot/:name", func(c *gin.Context) {
+			c.HTML(200, "hot", gin.H{
+				"name": c.Param("name"),
+			})
+		})
+		web.GET("/page/:name", controllers.RenderMarkdownFile) // 文档解析
 		// 豆瓣图片代理
 		web.GET("/doubanimg", controllers.DoubanImg)
 	}
 	// 加载404错误页面
 	r.NoRoute(func(c *gin.Context) {
 		// 实现内部重定向
-		c.HTML(200, "404", nil)
+		c.HTML(200, "404", gin.H{
+			"title": "404 - 页面未找到",
+			"desc":  "抱歉，您要找的页面可能已经离场了。不如去看看其他精彩内容？",
+		})
 	})
 }
 
 func createMyRender() multitemplate.Renderer {
 	r := multitemplate.NewRenderer()
-	r.AddFromFiles("home", "templates/web/base.tmpl", "templates/web/header.tmpl",
-		"templates/web/footer.tmpl", "templates/web/home.tmpl")
-	r.AddFromFiles("search", "templates/web/base.tmpl", "templates/web/header.tmpl",
-		"templates/web/footer.tmpl", "templates/web/search.tmpl")
-	r.AddFromFiles("detail", "templates/web/base.tmpl", "templates/web/header.tmpl",
-		"templates/web/footer.tmpl", "templates/web/detail.tmpl")
-	r.AddFromFiles("play", "templates/web/base.tmpl", "templates/web/header.tmpl",
-		"templates/web/footer.tmpl", "templates/web/play.tmpl")
-	r.AddFromFiles("about", "templates/web/base.tmpl", "templates/web/header.tmpl",
-		"templates/web/footer.tmpl", "templates/web/about.tmpl")
-	r.AddFromFiles("404", "templates/web/base.tmpl", "templates/web/header.tmpl",
-		"templates/web/footer.tmpl", "templates/web/404.tmpl")
+	r.AddFromFiles("home", "templates/web/base.html", "templates/web/home.html")
+	r.AddFromFiles("search", "templates/web/base.html", "templates/web/search.html")
+	r.AddFromFiles("detail", "templates/web/base.html", "templates/web/detail.html")
+	r.AddFromFiles("play", "templates/web/base.html", "templates/web/play.html")
+	r.AddFromFiles("about", "templates/web/base.html", "templates/web/about.html")
+	r.AddFromFiles("page", "templates/web/base.html", "templates/web/page.html")
+	r.AddFromFiles("hot", "templates/web/base.html", "templates/web/hot.html")
+	r.AddFromFiles("404", "templates/web/base.html", "templates/web/result.html")
 	return r
 }

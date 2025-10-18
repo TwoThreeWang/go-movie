@@ -1,6 +1,8 @@
 module movie
 
-go 1.20
+go 1.21
+
+toolchain go1.23.4
 
 require gorm.io/gorm v1.25.1
 
@@ -16,6 +18,7 @@ require (
 	github.com/natefinch/lumberjack v2.0.0+incompatible
 	github.com/patrickmn/go-cache v2.1.0+incompatible
 	github.com/spf13/viper v1.16.0
+	github.com/yuin/goldmark v1.4.13
 	go.uber.org/zap v1.21.0
 )
 

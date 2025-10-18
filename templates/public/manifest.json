@@ -1,0 +1,31 @@
+{
+  "name": "Moovie - 一键搜索全网影视",
+  "short_name": "Moovie",
+  "description": "Moovie 是一个全网影视聚合搜索网站，一键搜索电影、电视剧、综艺节目，并实时更新豆瓣热门榜单。",
+  "start_url": "/",
+  "scope": "/",
+  "display": "standalone",
+  "orientation": "portrait",
+  "background_color": "#f60c3e",
+  "theme_color": "#f60c3e",
+  "icons": [
+    {
+      "src": "/public/static/img/moovie-app.png",
+      "sizes": "192x192",
+      "type": "image/png",
+      "purpose": "any"
+    },
+    {
+      "src": "/public/static/img/moovie-app.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "any"
+    },
+    {
+      "src": "/public/static/img/moovie-app.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "maskable"
+    }
+  ]
+}

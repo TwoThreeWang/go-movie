@@ -1,0 +1,392 @@
+{{ template "base.html" . }}
+{{ define "title" }}
+<title>{{.name}} 在线观看 - Moovie 全网影视聚合平台</title>
+<meta name="description" content="正在播放《{{.name}}》，Moovie 聚合全网影视资源，为你提供高清播放、多源切换与智能续播功能。发现更多精彩电影，就在 Moovie。">
+<meta name="keywords" content="{{.name}}, {{.name}}在线观看, {{.name}}完整版, {{.name}}高清播放, Moovie, 影视播放, 全网影视聚合, 在线看电影, 免费追剧">
+<link rel="canonical" href="https://moovie.c2v2.com/play?source={{.source}}&vid={{.vid}}&name={{.name}}&play={{.play}}">
+<meta property="og:title" content="{{.name}} 在线观看 - Moovie">
+<meta property="og:description" content="正在播放《{{.name}}》，全网聚合，一键直达可播放源。">
+<meta property="og:type" content="video.movie">
+<meta property="og:url" content="https://moovie.app/play?source={{.source}}&vid={{.vid}}&name={{.name}}&play={{.play}}">
+{{end}}
+{{ define "schema" }}
+{
+  "@context": "https://schema.org",
+  "@type": "Movie",
+  "name": "{{.name}}",
+  "description": "正在播放《{{.name}}》，Moovie 聚合全网影视资源，为你提供高清播放、多源切换与智能续播功能。发现更多精彩电影，就在 Moovie。",
+  "potentialAction": {
+    "@type": "WatchAction",
+    "target": "https://moovie.c2v2.com/play?source={{.source}}&vid={{.vid}}&name={{.name}}&play={{.play}}"
+  }
+}
+{{end}}
+{{ define "content" }}
+<style>
+#dplayer{
+    position: relative;
+    width: 100%;
+    background: #000;
+    margin-bottom: 1rem;
+    border-radius: 8px;
+    overflow: hidden;
+    max-height: 90dvh; /* 不超过屏幕高度 */
+    aspect-ratio: 16 / 9; /* 保持9:16比例 */
+}
+.movie-detail {
+  display: grid;
+    grid-template-areas:
+    "poster info"
+    "poster more"
+    "desc desc";
+  grid-template-columns: 200px 1fr;
+  gap: 16px;
+  align-items: start;
+  margin: 0 auto;
+  padding: 16px;
+  border: 1px dotted var(--border-color);
+  border-radius: 8px;
+}
+.movie-detail .movie-title {
+  font-size: 1.8rem;
+  margin: 0;
+margin-bottom: 0.5rem;
+text-align: left;
+color: var(--bg-primary-text);
+}
+.movie-detail .movie-poster {
+  grid-area: poster;
+  width: 100%;
+  max-width: 200px;
+}
+
+.movie-detail .movie-poster img {
+  width: 100%;
+  object-fit: cover;
+  border-radius: 8px;
+}
+
+.movie-detail .movie-meta {
+  grid-area: info;
+  color: var(--secondary-text-one);
+}
+.movie-detail .movie-more{
+   grid-area: more;
+   font-size: 0.9em;
+   color: var(--secondary-text-one);
+}
+
+.movie-info span {
+  background-color: var(--border-color);
+    padding: 2px 6px;
+    border-radius: 4px;
+}
+
+.movie-detail .movie-desc {
+  grid-area: desc;
+  color: var(--secondary-text-two);
+    line-height: 1.8;
+}
+.episodes {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.5rem;
+    margin: 1rem 0;
+}
+.episode-btn {
+    padding: 0.5rem 1rem;
+    border: 1px solid var(--border-color);
+    border-radius: 4px;
+    background: var(--primary-text);
+    color: var(--bg-primary-text);
+    cursor: pointer;
+    transition: all 0.3s;
+}
+.episode-btn:hover,
+.episode-btn.active {
+    background: var(--primary-color);
+    color: var(--primary-text);
+    border-color: var(--primary-color);
+}
+.related-title {
+    margin: 2rem 0 1rem;
+    color: var(--primary-color);
+    font-size: 1.2rem;
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+}
+@media(max-width: 768px) {
+    .movie-detail {
+        grid-template-areas:
+        "poster info"
+        "more more"
+        "desc desc";
+        grid-template-columns: 120px 1fr;
+        gap: 12px;
+  }
+}
+</style>
+<div class="breadcrumb">
+    <a href="/">首页</a>
+    <span>/</span>
+    <span>{{.name}} 在线观看</span>
+</div>
+<div class="video-container">
+    <div id="dplayer"></div>
+</div>
+<div class="movie-detail" id="movie-detail">
+    <div id="load">
+        <span class="cow-emoji" role="img" aria-label="Cow">🎬</span>
+        <p>视频详细信息加载中...</p>
+    </div>
+</div>
+<div class="title">
+    <svg viewBox="0 0 24 24">
+        <polygon points="5 4 15 12 5 20" />
+    </svg>
+    选集播放
+</div>
+<div class="episodes" id="episodes"></div>
+<br>
+<div class="title">
+    <svg viewBox="0 0 24 24">
+        <path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/>
+    </svg>
+    更多视频源
+</div>
+<div class="movies" id="more-movies"></div>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/hls.js/1.6.13/hls.min.js" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+<script type="text/javascript" charset="utf-8" src="https://cdnjs.cloudflare.com/ajax/libs/dplayer/1.27.1/DPlayer.min.js"></script>
+<script type="text/javascript">
+videoID = '{{.source}}{{.vid}}';
+function dplayer(url,pic,title){
+    const dp = new DPlayer({
+        container: document.getElementById('dplayer'),
+        autoplay:true,
+        airplay:true,
+        preload: 'auto',//视频预加载
+        chromecast:true,
+        video: {
+            url: url,
+            type: 'hls',
+            pic: pic,   //视频封面
+        },
+        pluginOptions: {
+            hls: {
+                maxBufferLength: 120,       // 缓冲 120 秒
+                maxMaxBufferLength: 180,    // 硬上限 180 秒
+                startFragPrefetch: true,    // 提前加载下一个分片
+                maxBufferSize: 200 * 1000 * 1000, // 缓冲区最大 200MB
+                autoStartLoad: true,        // 自动加载
+            },
+        },
+    });
+
+    const movie = Storage.getById(videoID);
+    var lastTime = 0;
+    if(movie&&movie.title==title){
+        lastTime = movie.lastTime;
+    }
+
+    dp.on('pause', () => {
+        showad();
+        const hls = dp.plugins.hls;
+        if (hls) {
+            hls.startLoad(); // 让它继续加载分片
+        }
+    });
+    dp.on('play', () => {
+        closead();
+    });
+    dp.on('loadedmetadata', () => {
+        if (lastTime > 0 && lastTime < dp.video.duration) {
+            dp.seek(lastTime); // 恢复上次播放时间
+        }
+        const video = dp.video;
+        if (video) {
+            video.preservesPitch = true;
+            video.mozPreservesPitch = true;
+            video.webkitPreservesPitch = true;
+        }
+    });
+    dp.on('timeupdate', function () {
+        Storage.upsert({
+            id: videoID,
+            title: title,
+            source: "{{.source}}",
+            vid: "{{.vid}}",
+            play: btoa(url),
+            lastTime:dp.video.currentTime,
+            img: pic
+        });
+    });
+
+    // 广告配置
+    var adpic = "../public/static/img/ad.png";
+    var adlink = "/page/about";
+    var adtim = "5";
+    var autoclose = "1";
+
+    // 获取 player 元素
+    var player = document.getElementById('dplayer');
+
+    // 1️插入广告 HTML
+    var adboxHTML = `
+    <div id="overlay">
+        <div class="adbox">
+            <a href="${adlink}" target="_blank" rel="nofollow">
+                <img src="${adpic}">
+            </a>
+            <span id="closead" onclick="closead()">点击空白区域关闭广告</span>
+        </div>
+    </div>
+    <style type="text/css">
+    #overlay{position:absolute;z-index:7;background:rgba(0,0,0,0.6);top:0;bottom:0;left:0;right:0}
+    .adbox{position:absolute;z-index:8;background-color:#000;margin:auto;top:0;bottom:0;left:0;right:0;width:50%;max-height:80%;border: 4px solid #f60c3e;border-radius:8px}
+    .adbox img{width:100%;height:100%;position:absolute;margin:auto;top:0;left:0;border-radius:7px;object-fit:contain;border-radius:8px}
+    #closead{position:relative;z-index:8;color:#FFF;background:#f60c3e;float:right;font-size:14px;padding:10px;cursor:pointer;}
+    </style>
+    `;
+
+    // 原生 JS 等价 prepend
+    player.insertAdjacentHTML('afterbegin', adboxHTML);
+    var adbox = document.getElementById('overlay');
+    function closead(){
+        if (adbox) {
+        adbox.style.display = 'none';
+        }
+        dp.play();
+    }
+    function showad(){
+        if (adbox) {
+        adbox.style.display = 'block';
+        }
+    }
+    // 点击 overlay 关闭广告
+    adbox.addEventListener('click', closead);
+
+    // 阻止 adbox 内部点击冒泡
+    document.querySelector('.adbox').addEventListener('click', function(event) {
+        event.stopPropagation();
+    });
+}
+function get_link_dict(str){
+    // 拆分视频链接
+    var index = 0
+    var play_link = new Map([])
+    var play = atob({{.play}})
+    var play_name = ""
+    for (var item_one of str.split('$$$')) {
+        if (item_one.indexOf(".m3u8") != -1){
+            // 先拆分每一集
+            for(var item of item_one.split('#')) {
+                index += 1
+                var list_two = item.split('$') // 再拆分标题和链接
+                play_link.set(list_two[0],btoa(list_two[1]))
+                if(play==""&&index==1){
+                    play = list_two[1]
+                    play_name = list_two[0]
+                }else if(play==list_two[1]&&play_name==""){
+                    play_name = list_two[0]
+                }
+            }
+        }
+    }
+    return {
+        play_link: play_link,
+        play: play,
+        play_name: play_name
+    }
+}
+async function getDetail() {
+    try {
+        const response = await sendRequest('GET', '/api/detail?source={{.source}}&id={{.vid}}');
+
+        if (response.code !== 200) {
+            throw new Error(`HTTP error! status: ${response.msg}`);
+        }
+        const movie_data = await response.data;
+        if (movie_data==null){
+            showMsg('加载影视数据失败，重新搜索试试？', "error")
+            return
+        }
+        var { play_link, play, play_name } = get_link_dict(movie_data.VodPlayUrl);
+        dplayer(play,movie_data.VodPic,movie_data.VodName+play_name)
+        var movie_info = document.getElementById("movie-detail");
+        movie_info.innerHTML = `<div class="movie-poster">
+            <img src="${movie_data.VodPic}" loading="lazy" alt="${movie_data.VodName}" referrerPolicy="no-referrer">
+            </div>
+            <div class="movie-meta">
+                <p class="movie-title">${movie_data.VodName} <small>${play_name}</small></p>
+                <div class="movie-info">
+                    <span>${movie_data.Source}</span>
+                    <span>${movie_data.TypeName}</span>
+                    <span>${movie_data.VodTag}</span>
+                    <span>${movie_data.VodArea}</span>
+                    <span>${movie_data.VodLang}</span>
+                    <span>${movie_data.VodYear}</span>
+                </div>
+            </div>
+            <div class="movie-more">
+                <p><b>又名</b>：${movie_data.VodSub}</p>
+                <p><b>导演</b>：${movie_data.VodDirector}</p>
+                <p><b>主演</b>：${movie_data.VodActor}</p>
+                <p><b>上映</b>：${movie_data.VodPubdate}</p>
+                <p><b>集数</b>：${movie_data.VodRemarks}</p>
+                <p><b>豆瓣</b>：<a href="https://movie.douban.com/subject/${movie_data.VodDoubanId}" target="_blank">${movie_data.VodName}（${movie_data.VodDoubanScore}）</a></p>
+                <p><b>更新</b>：${movie_data.VodTime}</p>
+            </div>
+            <div class="movie-desc">${movie_data.VodContent}</div>`
+        var episodes = document.getElementById("episodes");
+        for (const [key, value] of play_link) {
+            if (value==btoa(play)){
+                episodes.innerHTML += `<a href="/play?source={{.source}}&vid={{.vid}}&play=${value}&name=${movie_data.VodName}" class="episode-btn active">${key}</a>`
+            }else{
+                episodes.innerHTML += `<a href="/play?source={{.source}}&vid={{.vid}}&play=${value}&name=${movie_data.VodName}" class="episode-btn">${key}</a>`
+            }
+        }
+        getMoreMovie(movie_data.VodName);
+    } catch (error) {
+        console.error('加载影视数据失败:', error);
+        showMsg('加载影视数据失败，重新搜索试试？', "error")
+    }
+}
+async function getMoreMovie(name) {
+    try {
+        const response = await sendRequest('GET', '/api/search?kw='+name);
+
+        if (response.code !== 200) {
+            throw new Error(`HTTP error! status: ${response.msg}`);
+        }
+        const movies_data = await response.data;
+        var more_movies = document.getElementById("more-movies");
+        for (let i = 0; i < movies_data.length; i++) {
+            var item = movies_data[i];
+            if(item.source == {{.source}} && item.vod_id=={{.vid}}){
+                continue
+            }
+            more_movies.innerHTML += `<a href="/play?source=${item.source}&vid=${item.vod_id}&name=${item.vod_name}" class="movie-card">
+                <div class="movie-poster">
+                    <img loading="lazy" referrerPolicy="no-referrer" src="${item.vod_pic}" alt="${item.vod_name}">
+                </div>
+                <div class="movie-title">${item.vod_name}</div>
+                <div class="movie-info">
+                    <span>${item.vod_year}</span>
+                    <span>${item.vod_area}｜${item.type_name}</span>
+                    <span>${item.vod_director}(导)</span>
+                    <span>${item.source}(${item.vod_remarks})</span>
+                </div>
+            </a>`
+        }
+    } catch (error) {
+        console.error('加载影视数据失败:', error);
+        showMsg('加载影视数据失败，重新搜索试试？', "error")
+    }
+}
+// 页面加载完成后执行
+document.addEventListener('DOMContentLoaded', function () {
+    getDetail();
+});
+</script>
+{{ end }}

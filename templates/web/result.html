@@ -1,0 +1,49 @@
+{{ template "base.tmpl" . }}
+{{ define "title" }}
+<title>{{.title}} - Moovie</title>
+<meta name="description" content="Moovie 是一个全网影视聚合搜索网站，支持一键搜索各大资源平台的电影、电视剧和综艺节目，让你轻松找到想看的影片。首页实时更新豆瓣热门影视榜单，无需注册，即搜即看。">
+<meta name="keywords" content="Moovie, 影视搜索, 电影搜索, 电视剧搜索, 在线看电影, 聚合搜索, 全网视频, 豆瓣热门, 热门电影, 免费影视资源">
+{{end}}
+{{ define "content" }}
+<style>
+    .message-container {
+        max-width: 600px;
+        margin: 0 auto;
+        padding: 2rem;
+        text-align: center;
+        min-height: 60vh;
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+    }
+    .message-icon {
+        font-size: 5rem;
+        margin-bottom: 2rem;
+    }
+    .message-title {
+        font-size: 2.5rem;
+        color: var(--primary-color);
+        margin-bottom: 1rem;
+    }
+    .message-text {
+        color: var(--secondary-text-one);
+        margin-bottom: 2rem;
+        font-size: 1.2rem;
+    }
+    .message-actions {
+        display: flex;
+        gap: 1rem;
+        justify-content: center;
+        flex-wrap: wrap;
+    }
+</style>
+<div class="message-container">
+    <div class="message-icon">🎬</div>
+    <h1 class="message-title">{{.title}}</h1>
+    <p class="message-text">{{.desc}}</p>
+    <div class="message-actions">
+        <a href="/" class="button primary-button">返回首页</a>
+        <a href="javascript:history.back()" class="button">返回上一页</a>
+    </div>
+</div>
+{{ end }}

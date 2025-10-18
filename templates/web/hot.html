@@ -1,0 +1,94 @@
+{{ template "base.html" . }}
+{{ define "title" }}
+<title>豆瓣近期热门{{.name}}推荐，每日更新高分好片 - Moovie 全网影视聚合平台</title>
+<meta name="description" content="精选来自豆瓣的热门电影榜单，每日实时更新。涵盖最新高分电影、经典口碑影片、热门院线大片与冷门佳作，为你发现值得看的每一部电影。">
+<meta name="keywords" content="豆瓣热门电影, 豆瓣高分电影, 豆瓣电影推荐, 最新电影榜单, 好看电影, 高评分影片, 热门影片, 电影排行榜">
+{{end}}
+{{ define "content" }}
+<style>
+.article-header {
+    text-align: center;
+    margin-bottom: 3rem;
+    position: relative;
+    padding-bottom: 2rem;
+}
+.article-header::after {
+    content: '';
+    position: absolute;
+    bottom: 0;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 60px;
+    height: 4px;
+    background: var(--primary-color);
+    border-radius: 2px;
+}
+.article-title {
+    font-size: 2.5rem;
+    color: var(--primary-color);
+    margin-bottom: 1.5rem;
+    line-height: 1.3;
+}
+.movie-rating{
+    color: green;
+}
+</style>
+<div class="breadcrumb">
+    <a href="/">首页</a>
+    <span>/</span>
+    <span>豆瓣热门{{.name}}推荐</span>
+</div>
+<header class="article-header">
+    <h1 class="article-title">豆瓣近期热门 {{.name}} 推荐</h1>
+</header>
+<div id="load">
+    <span class="cow-emoji" role="img" aria-label="Cow">🎬</span>
+    <p>正在获取数据...</p>
+</div>
+<div class="movies" id="movies"></div>
+<script>
+async function getMovies() {
+    const movies = document.getElementById("movies");
+    const load = document.getElementById("load");
+    try {
+        const response = await sendRequest('GET', '/api/douban?type={{.name}}');
+
+        if (response.code !== 200) {
+            throw new Error(`HTTP error! status: ${response.msg}`);
+        }
+        const movies_data = await response.data;
+        var movies_html = '';
+        if(movies_data){
+            for (let i = 0; i < movies_data.length; i++) {
+                var item = movies_data[i];
+                movies_html += `<div class="movie-card"><a href="/search?kw=${item.title}" title="搜索《${item.title}》相关资源">
+                    <div class="movie-poster">
+                        <img loading="lazy" src="${item.cover}" alt="${item.title} Movie Poster" referrerPolicy="no-referrer">
+                    </div>
+                    <div class="movie-title">${item.title}</div>
+                    <div class="movie-rating">
+                        <span>☆ ${item.rate}</span>
+                        <a href="${item.url}" target="_blank">去豆瓣 >>></a>
+                    </div>
+                </a></div>`
+            }
+        }
+        if (movies_html == ""){
+            load.innerHTML = `<span class="cow-emoji" role="img" aria-label="Cow">🤔</span><p>暂时没有获取到影片资源，过段时间再试试呗！</p>`
+        }else{
+            load.style.display = "none";
+        }
+        movies.innerHTML = movies_html;
+        console.log(movies_html);
+    } catch (error) {
+        console.error('加载影视数据失败:', error);
+        showMsg('加载影视数据失败', "error")
+        load.innerHTML = `<div id="load"><span class="cow-emoji" role="img" aria-label="Cow">🤔</span><p>加载影视数据失败:${error}</p></div>`;
+    }
+}
+// 页面加载完成后执行
+document.addEventListener('DOMContentLoaded', function () {
+    getMovies();
+});
+</script>
+{{end}}

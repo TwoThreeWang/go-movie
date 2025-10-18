@@ -1,0 +1,90 @@
+{{ template "base.html" . }}
+
+{{ define "content" }}
+<div class="hero">
+    <div class="logo">🐮 Moovie</div>
+    <p class="slogan">搜全网，只为你想看的那一部</p>
+    <p class="slogan">你的新葡京澳门威尼斯朋友来了</p>
+    <form action="/search" class="search-box">
+        <input type="text" placeholder="想看就搜，看你想看..." aria-label="搜索电影" name="kw">
+        <button>搜索</button>
+    </form>
+    <div class="keywords-box dot-bg" id="hotkw">
+        <a href="">热搜数据加载中...</a>
+    </div>
+</div>
+<div class="title">
+    <svg viewBox="0 0 24 24">
+        <polygon points="5 4 15 12 5 20" />
+    </svg>
+    继续观看
+</div>
+<div id="load"><span class="cow-emoji" role="img" aria-label="Cow">🍿</span><p>播放记录空空的，去发现一部让你上头的电影吧～</p></div>
+<div class="movies" id="history"></div>
+<script>
+    // 获取热门搜索
+    async function loadHotKey() {
+        const hotkw = document.getElementById("hotkw");
+        try {
+            const response = await sendRequest('GET', '/api/searchhistory');
+
+            if (response.code !== 200) {
+                throw new Error(`HTTP error! status: ${response.msg}`);
+            }
+
+            const kws = await response.data;
+            var hotkw_html = '';
+            for (let i = 0; i < kws.length; i++) {
+                hotkw_html += `<a href="/search?kw=${kws[i]}">${kws[i]}</a>`
+            }
+            hotkw.innerHTML = hotkw_html;
+        } catch (error) {
+            console.error('加载网站数据失败:', error);
+            showMsg('加载网站数据失败:' + error, "error")
+            hotkw.innerHTML = `热门搜索关键词加载失败！`;
+        }
+    }
+
+    function getHistory(){
+        const history_div = document.getElementById("history");
+        const all_history = Storage.getAll();
+        console.log(all_history);
+        history_html = "";
+        for (let i = 0; i < all_history.length; i++) {
+            var item = all_history[i];
+            history_html += `<a href="/play?source=${item['source']}&vid=${item['vid']}&play=${item['play']}&name=${item['title']}" class="movie-card">
+        <div class="movie-poster">
+            <img loading="lazy" src="${item['img']}" alt="${item['title']}" referrerPolicy="no-referrer">
+        </div>
+        <div class="movie-title">${item['title']}</div>
+        <div class="movie-rating">
+            <span>☆ ${item['source']}</span>
+            <div class="delete-btn" onclick="delHistory('${item['id']}')">
+                <svg viewBox="0 0 24 24">
+                    <circle cx="12" cy="12" r="10" />
+                    <path d="M9 12l2 2 4-4" />
+                </svg>
+            </div>
+        </div>
+    </a>`
+        }
+        if(history_html!=""){
+            document.getElementById("load").style.display = "none"
+        }
+        history_div.innerHTML = history_html;
+    }
+    function delHistory(id){
+        event.stopPropagation();
+        event.preventDefault();
+        Storage.remove(id);
+        getHistory();
+        showMsg("已删除","success");
+    }
+
+    // 页面加载完成后执行
+    document.addEventListener('DOMContentLoaded', function () {
+        loadHotKey();
+        getHistory();
+    });
+</script>
+{{ end }}
