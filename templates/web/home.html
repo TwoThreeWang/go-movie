@@ -52,14 +52,24 @@
         history_html = "";
         for (let i = 0; i < all_history.length; i++) {
             var item = all_history[i];
+            const percentage = Math.round((item['lastTime'] / item['duration']) * 100);
+            var stroke_dashoffset = 251 - percentage * 2.51;
+
             history_html += `<a href="/play?source=${item['source']}&vid=${item['vid']}&play=${item['play']}&name=${item['title']}" class="movie-card">
         <div class="movie-poster">
             <img loading="lazy" src="${item['img']}" alt="${item['title']}" referrerPolicy="no-referrer">
         </div>
         <div class="movie-title">${item['title']}</div>
         <div class="movie-rating">
-            <span>☆ ${item['source']}</span>
+            <span title="资源来源">© ${item['source']}</span>
+            <svg id="p" viewBox="0 0 100 100">
+                <title>播放进度</title>
+                <circle cx="50" cy="50" r="40" fill="none" stroke="#eee" stroke-width="5"></circle>
+                <circle id="c" cx="50" cy="50" r="40" fill="none" stroke="#f60c3e" stroke-width="5" stroke-dasharray="251" stroke-dashoffset="${stroke_dashoffset}" transform="rotate(-90 50 50)"  stroke-linecap="round"></circle>
+                <text id="t" x="50" y="60" text-anchor="middle" font-size="30" fill="#333">${percentage}%</text>
+            </svg>
             <div class="delete-btn" onclick="delHistory('${item['id']}')">
+                <title>标记完成，删除记录</title>
                 <svg viewBox="0 0 24 24">
                     <circle cx="12" cy="12" r="10" />
                     <path d="M9 12l2 2 4-4" />
