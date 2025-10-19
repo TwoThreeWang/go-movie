@@ -45,9 +45,12 @@ func RegisterIndexRoutes(r *gin.Engine) {
 				"name":   c.Query("name"),
 			})
 		})
-		// 关于页
-		web.GET("/about", func(c *gin.Context) {
-			c.HTML(200, "about", gin.H{})
+		// m3u8下载
+		web.GET("/tool/m3u8", func(c *gin.Context) {
+			c.HTML(200, "m3u8", gin.H{
+				"link": c.Query("link"),
+				"name": c.Query("name"),
+			})
 		})
 		web.GET("/hot/:name", func(c *gin.Context) {
 			c.HTML(200, "hot", gin.H{
@@ -74,7 +77,7 @@ func createMyRender() multitemplate.Renderer {
 	r.AddFromFiles("search", "templates/web/base.html", "templates/web/search.html")
 	r.AddFromFiles("detail", "templates/web/base.html", "templates/web/detail.html")
 	r.AddFromFiles("play", "templates/web/base.html", "templates/web/play.html")
-	r.AddFromFiles("about", "templates/web/base.html", "templates/web/about.html")
+	r.AddFromFiles("m3u8", "templates/web/base.html", "templates/web/m3u8.html")
 	r.AddFromFiles("page", "templates/web/base.html", "templates/web/page.html")
 	r.AddFromFiles("hot", "templates/web/base.html", "templates/web/hot.html")
 	r.AddFromFiles("404", "templates/web/base.html", "templates/web/result.html")

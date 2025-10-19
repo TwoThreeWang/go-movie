@@ -1,0 +1,314 @@
+{{ template "base.html" . }}
+{{ define "title" }}
+<title>M3U8 网页视频下载器 - Moovie 全网影视聚合平台</title>
+<meta name="description" content="M3U8 视频网页下载工具。无需安装任何软件，在浏览器内直接解析 HLS（m3u8）流媒体链接，自动抓取、合并视频分片（.ts 文件），并快速下载保存到本地。支持无加密的在线视频流下载。">
+<meta name="keywords" content="M3U8下载, HLS下载, 视频网页下载, 在线视频保存, 流媒体下载, m3u8解析, ts文件合并, 网页下载器">
+{{end}}
+{{ define "content" }}
+<style>
+    .article-header {
+    text-align: center;
+    margin-top: 3rem;
+    position: relative;
+    padding-bottom: 0.5rem;
+}
+.article-header::after {
+    content: '';
+    position: absolute;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 60px;
+    height: 4px;
+    background: var(--primary-color);
+    border-radius: 2px;
+}
+.article-title {
+    font-size: 2.5rem;
+    color: var(--primary-color);
+    margin-bottom: 1.5rem;
+    line-height: 1.3;
+}
+.container{max-width: 70%;margin: 1rem auto;}
+    .status { margin-top: 15px; padding: 10px; border-radius: 4px; background-color: #f8f9fa; border: 1px solid #e9ecef; min-height: 50px; white-space: pre-wrap;}
+    .progress-bar { width: 100%; height: 20px; background-color: #e9ecef; border-radius: 4px; margin-top: 10px; overflow: hidden; }
+    .progress { height: 100%; width: 0; background-color: #28a745; transition: width 0.3s; text-align: center; line-height: 20px; color: white; font-size: 12px;}
+</style>
+<div class="breadcrumb">
+    <a href="/">首页</a>
+    <span>/</span>
+    <span>M3U8视频下载工具</span>
+</div>
+<header class="article-header">
+    <h1 class="article-title">M3U8 视频下载工具</h1>
+</header>
+<div class="container">
+    <div class="search-box">
+        <label for="m3u8Url">M3U8 链接：</label>
+        <input type="text" id="m3u8Url" placeholder="请输入完整的 m3u8 URL">
+        <br><br>
+        <label for="fileName">保存文件名（.mp4）：</label>
+        <input type="text" id="fileName" value="" placeholder="例如：my_video.mp4">
+    </div>
+    <center>
+        <button onclick="startDownload()">开始下载</button>
+        <br>
+        <small>注意：刷新网页会中断下载，请保持页面开启状态等待下载完成！</small>
+    </center>
+    <div class="progress-bar">
+        <div class="progress" id="progressBar">0%</div>
+    </div>
+
+    <div class="status" id="statusLog">等待输入链接...</div>
+</div>
+
+<script>
+    // DOM 元素引用
+    const m3u8UrlInput = document.getElementById('m3u8Url');
+    const fileNameInput = document.getElementById('fileName');
+    const statusLog = document.getElementById('statusLog');
+    const progressBar = document.getElementById('progressBar');
+    m3u8UrlInput.value = atob("{{.link}}");
+    if("{{.name}}"!=""){
+        fileNameInput.value = "{{.name}}.mp4";
+    }
+
+    /**
+     * 记录状态日志
+     * @param {string} message - 要显示的消息
+     */
+    function logStatus(message) {
+        console.log(message);
+        statusLog.textContent = message;
+    }
+
+    /**
+     * 更新进度条
+     * @param {number} percentage - 进度百分比 (0-100)
+     */
+    function updateProgress(percentage) {
+        const display = Math.round(percentage);
+        progressBar.style.width = `${display}%`;
+        progressBar.textContent = `${display}%`;
+    }
+
+    /**
+     * 启动下载流程
+     */
+    async function startDownload() {
+        const m3u8Url = m3u8UrlInput.value.trim();
+        const fileName = fileNameInput.value.trim() || 'downloaded_video.ts';
+
+        if (!m3u8Url) {
+            logStatus("请输入有效的 M3U8 链接！");
+            return;
+        }
+
+        if (!m3u8Url.endsWith('.m3u8')) {
+            logStatus("警告：输入的链接似乎不是一个 .m3u8 文件！");
+        }
+
+        logStatus(`开始解析 M3U8 文件: ${m3u8Url}`);
+        updateProgress(0);
+
+        try {
+            // 1. 解析 M3U8 文件
+            const tsUrls = await recursiveParseM3U8(m3u8Url);
+            if (tsUrls.length === 0) {
+                logStatus("M3U8 解析失败，未找到有效的 .ts 分片链接。");
+                return;
+            }
+            logStatus(`解析成功，共找到 ${tsUrls.length} 个 .ts 分片。`);
+
+            // 2. 下载所有 .ts 分片
+            const tsDataArray = await downloadTS(tsUrls, m3u8Url);
+
+            const successfulChunks = tsDataArray.filter(buffer => buffer && buffer.byteLength > 0);
+            if (successfulChunks.length === 0) {
+                logStatus("下载失败！未能成功获取任何 .ts 分片数据。这可能是由于：\n1. 跨域访问限制 (CORS)。\n2. 防盗链机制 (Referer/Token)。\n3. 分片链接已失效。");
+                updateProgress(0);
+                return;
+            }
+
+            if (successfulChunks.length < tsUrls.length) {
+                // 仅提示部分分片失败，继续合并已下载的部分
+                logStatus(`警告：只有 ${successfulChunks.length} / ${tsUrls.length} 个分片成功下载。将合并已下载的部分。`);
+            } else {
+                logStatus("所有分片下载成功。");
+            }
+
+            // 3. 合并分片
+            logStatus("正在合并 .ts 分片...");
+            const videoBlob = await mergeTS(tsDataArray);
+
+            // 4. 触发下载
+            triggerDownload(videoBlob, fileName);
+            logStatus(`下载完成！文件已保存为: ${fileName}`);
+
+        } catch (error) {
+            logStatus(`下载过程中发生错误：${error.message}`);
+            console.error("下载错误详情：", error);
+        }
+    }
+
+    /**
+     * 解析 M3U8 文件内容，提取 .ts 分片 URL
+     * @param {string} url - M3U8 文件的 URL
+     * @returns {Promise<string[]>} - .ts 分片 URL 数组
+     */
+    async function parseM3U8(url) {
+        const response = await fetch(url);
+        if (!response.ok) {
+            throw new Error(`无法获取 M3U8 文件，状态码: ${response.status}`);
+        }
+        const content = await response.text();
+
+        // 提取基准 URL，用于处理相对路径
+        const baseUrl = url.substring(0, url.lastIndexOf('/') + 1);
+
+        // 简单解析：跳过所有以 # 开头的行，只提取 .ts 结尾的行
+        const tsUrls = content.split('\n')
+            .map(line => line.trim())
+            .filter(line => line && !line.startsWith('#'))
+            .map(line => {
+                // 处理相对路径：如果不是完整的 URL，则拼接基准 URL
+                if (!line.startsWith('http')) {
+                    return baseUrl + line;
+                }
+                return line;
+            });
+
+        return tsUrls;
+    }
+    async function recursiveParseM3U8(url, baseUrl = '') {
+    // 确保 URL 是绝对路径，如果不是，则使用 baseUrl 拼接
+    const absoluteUrl = url.startsWith('http') ? url : baseUrl + url;
+
+    // 1. 获取 M3U8 文件内容
+    let response;
+    try {
+        response = await fetch(absoluteUrl);
+        if (!response.ok) {
+            throw new Error(`无法获取 M3U8 文件，状态码: ${response.status}`);
+        }
+    } catch (error) {
+        throw new Error(`获取 M3U8 失败: ${error.message}`);
+    }
+
+    const content = await response.text();
+
+    // 重新确定基准 URL：如果当前 URL 是绝对路径，则以当前 URL 的目录作为基准
+    const currentBaseUrl = absoluteUrl.substring(0, absoluteUrl.lastIndexOf('/') + 1);
+
+    // 2. 检查是否为 Master Playlist（主播放列表）
+    // Master Playlist 通常包含 #EXT-X-STREAM-INF 标签
+    const streamInfoRegex = /#EXT-X-STREAM-INF.*[\r\n]+([^\r\n#]+)/i;
+    const streamInfoMatch = content.match(streamInfoRegex);
+
+    if (streamInfoMatch) {
+        // **【递归情况】**：这是主播放列表
+        const subPlaylistPath = streamInfoMatch[1].trim(); // 提取子 M3U8 路径（例如: 720p.m3u8）
+
+        console.log(`[递归] 发现主播放列表，正在进入子列表: ${subPlaylistPath}`);
+
+        // 递归调用自身，解析子播放列表
+        // 注意：这里默认选择找到的第一个子列表进行下载（通常是最高码率或默认码率）
+        return recursiveParseM3U8(subPlaylistPath, currentBaseUrl);
+
+    } else if (content.includes('#EXTINF')) {
+        // **【终止情况】**：这是 Media Playlist（媒体播放列表），包含 .ts 分片信息
+        console.log("[递归] 找到媒体播放列表，开始提取 .ts 分片链接。");
+
+        // 3. 提取 .ts 分片 URL
+        const tsUrls = content.split('\n')
+            .map(line => line.trim())
+            .filter(line => line && !line.startsWith('#'))
+            .map(line => {
+                // 确保 .ts 链接是绝对路径
+                if (!line.startsWith('http')) {
+                    return currentBaseUrl + line;
+                }
+                return line;
+            });
+
+        return tsUrls;
+
+    } else {
+        // 既不是 Master Playlist 也不是 Media Playlist (可能文件无效或内容为空)
+        throw new Error("M3U8 文件内容无效或不包含任何流信息。");
+    }
+}
+
+    /**
+     * 下载所有 .ts 分片
+     * @param {string[]} urls - .ts 分片 URL 数组
+     * @param {string} m3u8Url - M3U8 文件的 URL (用于日志)
+     * @returns {Promise<ArrayBuffer[]>} - .ts 分片的 ArrayBuffer 数组
+     */
+    async function downloadTS(urls, m3u8Url) {
+        const total = urls.length;
+        const downloadedChunks = [];
+        const CONCURRENCY_LIMIT = 6; // 限制并发下载数
+
+        logStatus(`开始下载 ${total} 个分片... (并发限制: ${CONCURRENCY_LIMIT})`);
+
+        // 使用 Promise 队列控制并发
+        let activePromises = [];
+        for (let i = 0; i < total; i++) {
+            const url = urls[i];
+            const tsPromise = fetch(url, { headers: { 'Referer': m3u8Url }}) // 尝试加入 Referer
+                .then(response => {
+                    if (!response.ok) {
+                        throw new Error(`分片 ${i + 1}/${total} 下载失败，状态码: ${response.status}`);
+                    }
+                    return response.arrayBuffer(); // 获取二进制数据
+                })
+                .then(buffer => {
+                    downloadedChunks[i] = buffer; // 保证按顺序存储
+                    const progress = ((i + 1) / total) * 100;
+                    updateProgress(progress);
+                    logStatus(`下载中... 完成 ${i + 1} / ${total} 个分片。`);
+                });
+
+            activePromises.push(tsPromise);
+
+            if (activePromises.length >= CONCURRENCY_LIMIT) {
+                // 等待最早的 promise 完成，以释放一个槽位
+                await Promise.race(activePromises);
+                // 清理已完成的 promise
+                activePromises = activePromises.filter(p => p.isFulfilled === false);
+            }
+        }
+
+        // 等待所有剩余的 promise 完成
+        await Promise.all(activePromises);
+
+        return downloadedChunks;
+    }
+
+    /**
+     * 合并 .ts 分片数据
+     * @param {ArrayBuffer[]} tsDataArray - .ts 分片的 ArrayBuffer 数组
+     * @returns {Blob} - 合并后的 Blob 对象
+     */
+    function mergeTS(tsDataArray) {
+        // 使用 Blob 构造函数直接接收 ArrayBuffer 数组进行合并
+        return new Blob(tsDataArray, { type: 'video/mp2t' }); // .ts 文件通常是 video/mp2t
+    }
+
+    /**
+     * 触发浏览器下载
+     * @param {Blob} blob - 要下载的 Blob 对象
+     * @param {string} fileName - 下载的文件名
+     */
+    function triggerDownload(blob, fileName) {
+        const downloadUrl = URL.createObjectURL(blob);
+        const a = document.createElement('a');
+        a.href = downloadUrl;
+        a.download = fileName;
+        document.body.appendChild(a);
+        a.click();
+        document.body.removeChild(a);
+        URL.revokeObjectURL(downloadUrl); // 释放内存
+    }
+</script>
+{{end}}

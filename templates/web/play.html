@@ -148,6 +148,15 @@ color: var(--bg-primary-text);
     选集播放
 </div>
 <div class="episodes" id="episodes"></div>
+<div class="title">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+    <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path>
+    <polyline points="7 10 12 15 17 10"></polyline>
+    <line x1="12" y1="15" x2="12" y2="3"></line>
+    </svg>
+    下载本片
+</div>
+<div class="episodes" id="download"></div>
 <br>
 <div class="title">
     <svg viewBox="0 0 24 24">
@@ -276,7 +285,7 @@ function get_link_dict(str){
     // 拆分视频链接
     var index = 0
     var play_link = new Map([])
-    var play = atob({{.play}})
+    var play = atob("{{.play}}")
     var play_name = ""
     for (var item_one of str.split('$$$')) {
         if (item_one.indexOf(".m3u8") != -1){
@@ -340,12 +349,14 @@ async function getDetail() {
             </div>
             <div class="movie-desc">${movie_data.VodContent}</div>`
         var episodes = document.getElementById("episodes");
+        var download = document.getElementById("download");
         for (const [key, value] of play_link) {
             if (value==btoa(play)){
                 episodes.innerHTML += `<a href="/play?source={{.source}}&vid={{.vid}}&play=${value}&name=${movie_data.VodName}" class="episode-btn active">${key}</a>`
             }else{
                 episodes.innerHTML += `<a href="/play?source={{.source}}&vid={{.vid}}&play=${value}&name=${movie_data.VodName}" class="episode-btn">${key}</a>`
             }
+            download.innerHTML += `<a href="/tool/m3u8?link=${value}&name=${movie_data.VodName}${key}" class="episode-btn" target="_blank">${key}</a>`
         }
         getMoreMovie(movie_data.VodName);
     } catch (error) {
@@ -364,7 +375,7 @@ async function getMoreMovie(name) {
         var more_movies = document.getElementById("more-movies");
         for (let i = 0; i < movies_data.length; i++) {
             var item = movies_data[i];
-            if(item.source == {{.source}} && item.vod_id=={{.vid}}){
+            if(item.source == "{{.source}}" && item.vod_id=="{{.vid}}"){
                 continue
             }
             more_movies.innerHTML += `<a href="/play?source=${item.source}&vid=${item.vod_id}&name=${item.vod_name}" class="movie-card">

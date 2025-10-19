@@ -93,4 +93,5 @@ Temporary Items
 /pkg/mod/cache/lock
 /.idea
 .mod
+*.log
 sqlite.db
