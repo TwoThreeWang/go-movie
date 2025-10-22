@@ -30,6 +30,7 @@
     <p>正在聚合搜索多个影视资源站...</p>
 </div>
 <div class="movies" id="movies"></div>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/hls.js/1.6.13/hls.min.js" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
 <script>
 function getM3u8(str){
     var list_one = item_one.split('#')
@@ -60,6 +61,7 @@ async function getSearch() {
                         <span>${item.vod_area}｜${item.type_name}</span>
                         <span>${item.vod_director}(导)</span>
                         <span>${item.source}（${item.vod_remarks}）</span>
+                        <span id="${item.source}${item.vod_id}" title="测速结果仅供参考，测速失败不一定无法播放">⏱️ 测速中...</span>
                     </div>
                 </a>`
             }
@@ -70,11 +72,105 @@ async function getSearch() {
             load.style.display = "none";
         }
         movies.innerHTML = movies_html;
+        Promise.all(
+            movies_data.map(t => {
+                const url = extractM3u8(t.vod_play_url);
+                const divId = `${t.source}${t.vod_id}`;
+                return testM3u8Speed(url, divId);
+            })
+        );
     } catch (error) {
         console.error('加载影视数据失败:', error);
         showMsg('加载影视数据失败，重新搜索试试？', "error")
         load.innerHTML = `<span class="cow-emoji" role="img" aria-label="Cow">🤔</span><p>暂时没有搜索到影片资源，过段时间再试试呗！</p>`
     }
+}
+function extractM3u8(vod_play_url) {
+  if (!vod_play_url) return null;
+  // 1. 先用 $ 分隔，取最后一个片段（大多数源都是这种格式）
+  const parts = vod_play_url.split('$').filter(Boolean);
+  let candidate = parts[parts.length - 1];
+  // 2. 再从中用正则提取出 m3u8 链接
+  const match = candidate.match(/https?:\/\/[^\s'"]+\.m3u8/);
+  return match ? match[0] : null;
+}
+function testM3u8Speed(url, divId) {
+  return new Promise((resolve) => {
+    const video = document.createElement('video');
+    video.style.display = 'none';
+    video.muted = true;
+
+    const startTime = performance.now();
+    let loaded = false;
+
+    // 设置 5 秒超时
+    const timeout = setTimeout(() => {
+      if (!loaded) {
+        loaded = true;
+        document.getElementById(divId).innerText = `⏱️ 测速失败`;
+        if (hls) {
+          hls.destroy();
+        }
+        video.remove();
+        resolve(Infinity);
+      }
+    }, 5000);
+    try {
+        if (Hls.isSupported()) {
+        const hls = new Hls();
+
+        hls.on(Hls.Events.MANIFEST_PARSED, () => {
+            if (!loaded) {
+            loaded = true;
+            clearTimeout(timeout);
+            const time = performance.now() - startTime;
+            document.getElementById(divId).innerText = `⏱️ ${time.toFixed(2)} ms`;
+            hls.destroy();
+            video.remove();
+            resolve(time);
+            }
+        });
+
+        hls.on(Hls.Events.ERROR, () => {
+            if (!loaded) {
+            loaded = true;
+            clearTimeout(timeout);
+            document.getElementById(divId).innerText = `⏱️ 测速失败`;
+            hls.destroy();
+            video.remove();
+            resolve(Infinity);
+            }
+        });
+
+        hls.loadSource(url);
+        hls.attachMedia(video);
+        } else {
+        video.src = url;
+        video.addEventListener('loadeddata', () => {
+            if (!loaded) {
+            loaded = true;
+            clearTimeout(timeout);
+            const time = performance.now() - startTime;
+            document.getElementById(divId).innerText = `⏱️ ${time.toFixed(2)} ms`;
+            resolve(time);
+            }
+        });
+
+        video.addEventListener('error', () => {
+            if (!loaded) {
+            loaded = true;
+            clearTimeout(timeout);
+            document.getElementById(divId).innerText = `⏱️ 测速失败`;
+            resolve(Infinity);
+            }
+        });
+        }
+    } catch (e) {
+        document.getElementById(divId).innerText = `⏱️ 测速失败`;
+        clearTimeout(timeout);
+    }
+    document.body.appendChild(video);
+  });
 }
 // 页面加载完成后执行
 document.addEventListener('DOMContentLoaded', function () {

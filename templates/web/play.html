@@ -399,13 +399,97 @@ async function getMoreMovie(name) {
                     <span>${item.vod_area}｜${item.type_name}</span>
                     <span>${item.vod_director}(导)</span>
                     <span>${item.source}(${item.vod_remarks})</span>
+                    <span id="${item.source}${item.vod_id}" title="测速结果仅供参考，测速失败不一定无法播放">⏱️ 测速中...</span>
                 </div>
             </a>`
         }
+        Promise.all(
+            movies_data.map(t => {
+                const url = t.vod_play_url.match(/https:\/\/[^#]+\.m3u8/)?.[0];
+                const divId = `${t.source}${t.vod_id}`;
+                return testM3u8Speed(url, divId);
+            })
+        );
     } catch (error) {
         console.error('加载影视数据失败:', error);
         showMsg('加载影视数据失败，重新搜索试试？', "error")
     }
+}
+
+function testM3u8Speed(url, divId) {
+  return new Promise((resolve) => {
+    const video = document.createElement('video');
+    video.style.display = 'none';
+    video.muted = true;
+
+    const startTime = performance.now();
+    let loaded = false;
+
+    // 设置 5 秒超时
+    const timeout = setTimeout(() => {
+      if (!loaded) {
+        loaded = true;
+        document.getElementById(divId).innerText = `⏱️ 测速失败`;
+        if (hls) {
+          hls.destroy();
+        }
+        video.remove();
+        resolve(Infinity);
+      }
+    }, 5000);
+
+    if (Hls.isSupported()) {
+      const hls = new Hls();
+
+      hls.on(Hls.Events.MANIFEST_PARSED, () => {
+        if (!loaded) {
+          loaded = true;
+          clearTimeout(timeout);
+          const time = performance.now() - startTime;
+          document.getElementById(divId).innerText = `⏱️ ${time.toFixed(2)} ms`;
+          hls.destroy();
+          video.remove();
+          resolve(time);
+        }
+      });
+
+      hls.on(Hls.Events.ERROR, () => {
+        if (!loaded) {
+          loaded = true;
+          clearTimeout(timeout);
+          document.getElementById(divId).innerText = `⏱️ 测速失败`;
+          hls.destroy();
+          video.remove();
+          resolve(Infinity);
+        }
+      });
+
+      hls.loadSource(url);
+      hls.attachMedia(video);
+    } else {
+      video.src = url;
+      video.addEventListener('loadeddata', () => {
+        if (!loaded) {
+          loaded = true;
+          clearTimeout(timeout);
+          const time = performance.now() - startTime;
+          document.getElementById(divId).innerText = `⏱️ ${time.toFixed(2)} ms`;
+          resolve(time);
+        }
+      });
+
+      video.addEventListener('error', () => {
+        if (!loaded) {
+          loaded = true;
+          clearTimeout(timeout);
+          document.getElementById(divId).innerText = `⏱️ 测速失败`;
+          resolve(Infinity);
+        }
+      });
+    }
+
+    document.body.appendChild(video);
+  });
 }
 // 页面加载完成后执行
 document.addEventListener('DOMContentLoaded', function () {
