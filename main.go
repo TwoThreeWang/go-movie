@@ -37,6 +37,7 @@ func main() {
 		// 指定静态资源目录
 		r.Static("/public", "./templates/public")
 		r.StaticFile("/robots.txt", "public/robots.txt")
+		r.StaticFile("/sitemap.xml", "public/sitemap.xml")
 		//r.LoadHTMLGlob("templates/*/*.tmpl")
 		routers.RegisterIndexRoutes(r)
 		routers.RegisterAdminRoutes(r)
