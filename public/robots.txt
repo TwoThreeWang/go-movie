@@ -1,2 +1,12 @@
-User-agent:*
-Disallow:/
+User-agent: mauibot
+Disallow: /
+
+User-agent: mj12bot
+Disallow: /
+
+User-agent: *
+Allow: /
+
+Crawl-delay: 3
+
+Sitemap: https://moovie.c2v2.com/sitemap.xml
