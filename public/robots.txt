@@ -6,6 +6,8 @@ Disallow: /
 
 User-agent: *
 Allow: /
+Disallow: /search
+Disallow: /play
 
 Crawl-delay: 3
 
